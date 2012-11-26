@@ -28,11 +28,14 @@ class TechVisualizations {
     }
 
     private function createCustomPostType() {
+        add_theme_support('post-thumbnails');
+
         $args = array(
             "label" => "Visualization Contents",
             "public" => false,
             "supports" => array('title','editor','thumbnail')
         );
+
         return register_post_type(self::CUSTOM_POST_TYPE, $args);
     }
 
