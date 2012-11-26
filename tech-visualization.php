@@ -10,6 +10,7 @@ new TechVisualizations();
 class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
+    const CUSTOM_POST_TYPE = "visualizationcontent";
 
     private $db;
 
@@ -19,6 +20,20 @@ class TechVisualizations {
         $this->db = &$wpdb;
 
         add_action("admin_menu", array(&$this, "add_menu_page"));
+        add_action("init", array(&$this, "setup_plugin"));
+    }
+
+    public function setup_plugin() {
+        $this->createCustomPostType();
+    }
+
+    private function createCustomPostType() {
+        $args = array(
+            "label" => "Visualization Contents",
+            "public" => false,
+            "supports" => array('title','editor','thumbnail')
+        );
+        return register_post_type(self::CUSTOM_POST_TYPE, $args);
     }
 
     public function add_menu_page() {
