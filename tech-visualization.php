@@ -11,7 +11,13 @@ class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
 
+    private $db;
+
     public function __construct() {
+        global $wpdb;
+
+        $this->db = &$wpdb;
+
         add_action("admin_menu", array(&$this, "add_menu_page"));
     }
 
