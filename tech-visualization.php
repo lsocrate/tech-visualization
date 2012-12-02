@@ -44,45 +44,23 @@ class TechVisualizations {
         add_submenu_page(self::SLUG, self::NAME, "Tech Content", "edit_posts", "techContent", array(&$this, "showTechContent"));
     }
 
-    public function showVisualizationPage() {
-        wp_enqueue_style('imgareaselect');
-        wp_enqueue_script('plupload-handlers');
-        wp_enqueue_script('image-edit');
-        wp_enqueue_script('set-post-thumbnail');
-        wp_enqueue_script('media-gallery');
+    private function handleUpload() {
+        check_admin_referer('media-form');
+        // Upload File button was clicked
+        $id = media_handle_upload('async-upload', $_REQUEST['post_id']);
+        unset($_FILES);
 
-        $_GET["inline"] = "true";
+        return !is_wp_error($id);
+    }
 
-        @header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
+    private function showVisualizationList() {
+    }
 
-        $errors = array();
-
-        if ( isset($_POST['html-upload']) && !empty($_FILES) ) {
-            check_admin_referer('media-form');
-            // Upload File button was clicked
-            $id = media_handle_upload('async-upload', $_REQUEST['post_id']);
-            unset($_FILES);
-            if ( is_wp_error($id) ) {
-                $errors['upload_error'] = $id;
-                $id = false;
-            }
-        }
-
-        if ( isset($_GET['upload-page-form']) ) {
-            $errors = array_merge($errors, (array) media_upload_form_handler());
-
-            $location = 'upload.php';
-            if ( $errors )
-                $location .= '?message=3';
-
-            wp_redirect( admin_url($location) );
-            exit;
-        }
+    private function printUploadForm() {
         ?>
         <div class="wrap">
         <h2>Upload New Visualization</h2>
-
-        <form enctype="multipart/form-data" method="post" action="<?php echo admin_url('admin.php?page=techVisualization&amp;inline=&amp;upload-page-form='); ?>" class="media-upload-form type-form validate html-uploader" id="file-form">
+        <form enctype="multipart/form-data" method="post" action="<?php echo admin_url('admin.php?page=techVisualization'); ?>" class="media-upload-form type-form validate html-uploader" id="file-form">
 
         <?php media_upload_form(); ?>
 
@@ -104,6 +82,25 @@ class TechVisualizations {
         </form>
         </div>
         <?php
+    }
+
+
+    public function showVisualizationPage() {
+        wp_enqueue_style('imgareaselect');
+        wp_enqueue_script('plupload-handlers');
+        wp_enqueue_script('image-edit');
+        wp_enqueue_script('set-post-thumbnail');
+        wp_enqueue_script('media-gallery');
+
+        $errors = array();
+
+        if (isset($_POST['html-upload']) && !empty($_FILES)) {
+            if ($this->handleUpload()) {
+                $this->showVisualizationList();
+            }
+        } else {
+            $this->printUploadForm();
+        }
     }
 
     public function showTechContent() {
