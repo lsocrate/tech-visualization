@@ -9,7 +9,8 @@ new TechVisualizations();
 class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
-    const CUSTOM_POST_TYPE = "visualizationcontent";
+    const CONTENT_POST_TYPE = "visualizationcontent";
+    const VISUALIZATION_POST_TYPE = "visualization";
 
     private $db;
 
@@ -23,19 +24,23 @@ class TechVisualizations {
     }
 
     public function setup_plugin() {
+        add_theme_support('post-thumbnails');
         $this->createCustomPostType();
     }
 
     private function createCustomPostType() {
-        add_theme_support('post-thumbnails');
-
-        $args = array(
+        $argsContent = array(
             "label" => "Visualization Contents",
             "public" => false,
             "supports" => array('title','editor','thumbnail')
         );
+        $argsVisualization = array(
+            "label" => "Visualizations",
+            "public" => false,
+            "supports" => array('title','editor')
+        );
 
-        return register_post_type(self::CUSTOM_POST_TYPE, $args);
+        return register_post_type(self::CONTENT_POST_TYPE, $argsContent) && register_post_type(self::VISUALIZATION_POST_TYPE, $argsVisualization);
     }
 
     public function add_menu_page() {
