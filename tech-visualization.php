@@ -10,6 +10,8 @@ class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
     const CUSTOM_POST_TYPE = "visualizationcontent";
+    const VISUALIZATION_META_KEY = "visualization";
+    const VISUALIZATION_META_VALUE = "visualization";
 
     private $db;
 
@@ -48,7 +50,13 @@ class TechVisualizations {
         $id = media_handle_upload('async-upload', $_REQUEST['post_id']);
         unset($_FILES);
 
-        return !is_wp_error($id);
+        if (is_wp_error($id)) {
+            return false;
+        }
+
+        $updateResult = update_post_meta($id, self::VISUALIZATION_META_KEY, self::VISUALIZATION_META_VALUE);
+
+        return (bool) ($updateResult !== false);
     }
 
     private function showVisualizationList() {
