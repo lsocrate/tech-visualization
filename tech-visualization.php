@@ -65,7 +65,7 @@ class TechVisualizations {
         <?php
     }
 
-    private function printUploadForm() {
+    private function showUploadForm() {
         ?>
         <div class="wrap">
         <h2>Upload New Visualization</h2>
@@ -108,7 +108,7 @@ class TechVisualizations {
                 $this->showVisualizationSuccess();
             }
         } else {
-            $this->printUploadForm();
+            $this->showUploadForm();
         }
     }
 
