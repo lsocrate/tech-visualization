@@ -23,12 +23,11 @@ class TechVisualizations {
     }
 
     public function setup_plugin() {
+        add_theme_support('post-thumbnails');
         $this->createCustomPostType();
     }
 
     private function createCustomPostType() {
-        add_theme_support('post-thumbnails');
-
         $args = array(
             "label" => "Visualization Contents",
             "public" => false,
