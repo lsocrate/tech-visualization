@@ -59,7 +59,10 @@ class TechVisualizations {
         return (bool) ($updateResult !== false);
     }
 
-    private function showVisualizationList() {
+    private function showVisualizationSuccess() {
+        ?>
+        <h2>New Visualization uploaded with success</h2>
+        <?php
     }
 
     private function printUploadForm() {
@@ -102,7 +105,7 @@ class TechVisualizations {
 
         if (isset($_POST['html-upload']) && !empty($_FILES)) {
             if ($this->handleUpload()) {
-                $this->showVisualizationList();
+                $this->showVisualizationSuccess();
             }
         } else {
             $this->printUploadForm();
