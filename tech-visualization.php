@@ -36,6 +36,7 @@ class TechVisualizations {
 
     private function setupDatabase() {
         $this->db->tv_visualizations = $this->db->prefix . "tv_visualizations";
+        $this->db->tv_content = $this->db->prefix . "tv_content";
 
         if (!$this->doesTableExist($this->db->tv_visualizations)) {
             $sql = "CREATE TABLE {$this->db->tv_visualizations} (
@@ -43,6 +44,20 @@ class TechVisualizations {
               attachment_id int NOT NULL,
               UNIQUE KEY id (id),
               KEY attachments (attachment_id)
+            );";
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+            dbDelta($sql);
+        }
+
+        if (!$this->doesTableExist($this->db->tv_content)) {
+            $sql = "CREATE TABLE {$this->db->tv_content} (
+              id int NOT NULL AUTO_INCREMENT,
+              attachment_id int NOT NULL,
+              content_id int NOT NULL,
+              UNIQUE KEY id (id),
+              KEY attachments (attachment_id, content_id)
             );";
 
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
