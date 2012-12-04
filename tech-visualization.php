@@ -27,6 +27,28 @@ class TechVisualizations {
     public function setup_plugin() {
         add_theme_support('post-thumbnails');
         $this->createCustomPostType();
+        $this->setupDatabase();
+    }
+
+    private function doesTableExist($table) {
+        return (bool) $this->db->get_var("SHOW TABLES LIKE '{$table}'") == $table;
+    }
+
+    private function setupDatabase() {
+        $this->db->tv_visualizations = $this->db->prefix . "tv_visualizations";
+
+        if (!$this->doesTableExist($this->db->tv_visualizations)) {
+            $sql = "CREATE TABLE {$this->db->tv_visualizations} (
+              id int NOT NULL AUTO_INCREMENT,
+              attachment_id int NOT NULL,
+              UNIQUE KEY id (id),
+              KEY attachments (attachment_id)
+            );";
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+            dbDelta($sql);
+        }
     }
 
     private function createCustomPostType() {
@@ -46,7 +68,6 @@ class TechVisualizations {
 
     private function handleUpload() {
         check_admin_referer('media-form');
-        // Upload File button was clicked
         $id = media_handle_upload('async-upload', $_REQUEST['post_id']);
         unset($_FILES);
 
@@ -56,7 +77,13 @@ class TechVisualizations {
 
         $updateResult = update_post_meta($id, self::VISUALIZATION_META_KEY, self::VISUALIZATION_META_VALUE);
 
-        return (bool) ($updateResult !== false);
+        if (!$updateResult) {
+            return false;
+        }
+
+        $rowsAffected = $this->db->insert($this->db->tv_visualizations, array("attachment_id" => $id));
+
+        return (bool) ($rowsAffected !== false);
     }
 
     private function showVisualizationSuccess() {
