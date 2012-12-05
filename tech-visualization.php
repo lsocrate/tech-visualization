@@ -22,6 +22,7 @@ class TechVisualizations {
 
         add_action("admin_menu", array(&$this, "add_menu_page"));
         add_action("init", array(&$this, "setup_plugin"));
+        add_action("save_post", array(&$this, "saveVisualizationContentData"));
     }
 
     public function setup_plugin() {
@@ -76,6 +77,11 @@ class TechVisualizations {
         );
 
         return register_post_type(self::CUSTOM_POST_TYPE, $args);
+    }
+
+    public function saveVisualizationContentData($id, $post = null) {
+        if (isset($_POST["post_type"]) && $_POST["post_type"] == self::CUSTOM_POST_TYPE) {
+        }
     }
 
     public function add_menu_page() {
