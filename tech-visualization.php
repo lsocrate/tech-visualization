@@ -5,6 +5,8 @@ Author: Luiz Sócrate
 Author URI: http://socrate.com.br
 */
 
+require_once "visualizations-list-table.php";
+
 global $wpdb;
 new TechVisualizations($wpdb);
 
@@ -84,6 +86,13 @@ class TechVisualizations {
         }
     }
 
+    private function getVisualizationIdList() {
+        $sql = "SELECT attachment_id FROM {$this->db->tv_visualizations}";
+        $list = $this->db->get_col($sql);
+
+        return $list;
+    }
+
     public function add_menu_page() {
         add_menu_page(self::NAME, self::NAME, 'edit_posts', self::SLUG, array(&$this, "showVisualizationPage"), null, 23);
     }
@@ -115,6 +124,11 @@ class TechVisualizations {
     }
 
     private function showUploadForm() {
+        wp_enqueue_style('imgareaselect');
+        wp_enqueue_script('plupload-handlers');
+        wp_enqueue_script('image-edit');
+        wp_enqueue_script('set-post-thumbnail');
+        wp_enqueue_script('media-gallery');
         ?>
         <div class="wrap">
         <h2>Upload New Visualization</h2>
@@ -142,20 +156,35 @@ class TechVisualizations {
         <?php
     }
 
+    private function showVisualizationsList($idList) {
+        $visualizationsTable = new VisualizationsListTable();
+        $visualizationsTable->id_list = $idList;
+        $visualizationsTable->prepare_items();
+        ?>
+        <div class="wrap">
+            <h2>Visualizations</h2>
+            <form id="posts-filter" action="" method="get">
+                <?php $visualizationsTable->display(); ?>
+            </form>
+        </div>
+        <?php
+    }
 
     public function showVisualizationPage() {
-        wp_enqueue_style('imgareaselect');
-        wp_enqueue_script('plupload-handlers');
-        wp_enqueue_script('image-edit');
-        wp_enqueue_script('set-post-thumbnail');
-        wp_enqueue_script('media-gallery');
-
-        if (isset($_POST['html-upload']) && !empty($_FILES)) {
-            if ($this->handleUpload()) {
-                $this->showVisualizationSuccess();
+        $visualizationIds = $this->getVisualizationIdList();
+        if (empty($visualizationIds)) {
+            if (isset($_POST['html-upload']) && !empty($_FILES)) {
+                if ($this->handleUpload()) {
+                    $this->showVisualizationSuccess();
+                }
+            } else {
+                $this->showUploadForm();
             }
         } else {
-            $this->showUploadForm();
+            $this->showVisualizationsList($visualizationIds);
+            foreach ($visualizationIds as $id) {
+                $post = get_post($id);
+            }
         }
     }
 }
