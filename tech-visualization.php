@@ -5,7 +5,9 @@ Author: Luiz Sócrate
 Author URI: http://socrate.com.br
 */
 
-new TechVisualizations();
+global $wpdb;
+new TechVisualizations($wpdb);
+
 class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
@@ -15,10 +17,8 @@ class TechVisualizations {
 
     private $db;
 
-    public function __construct() {
-        global $wpdb;
-
-        $this->db = &$wpdb;
+    public function __construct(wpdb $database) {
+        $this->db = $database;
 
         add_action("admin_menu", array(&$this, "add_menu_page"));
         add_action("init", array(&$this, "setup_plugin"));
