@@ -143,8 +143,6 @@ class TechVisualizations {
         wp_enqueue_script('set-post-thumbnail');
         wp_enqueue_script('media-gallery');
 
-        $errors = array();
-
         if (isset($_POST['html-upload']) && !empty($_FILES)) {
             if ($this->handleUpload()) {
                 $this->showVisualizationSuccess();
