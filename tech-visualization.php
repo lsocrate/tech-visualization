@@ -78,7 +78,7 @@ class TechVisualizations {
 
     public function add_menu_page() {
         add_menu_page(self::NAME, self::NAME, 'edit_posts', self::SLUG, array(&$this, "showVisualizationPage"), null, 24);
-        add_submenu_page(self::SLUG, self::NAME, "Tech Content", "edit_posts", "techContent", array(&$this, "showTechContent"));
+        add_submenu_page(self::SLUG, self::NAME, "Tech Content", "edit_posts", "techContent", array(&$this, "techContent"));
     }
 
     private function handleUpload() {
@@ -154,9 +154,17 @@ class TechVisualizations {
         }
     }
 
-    public function showTechContent() {
+    public function techContent() {
+        if (empty($_POST)) {
+            $this->showTechContent();
+        } else {
+            $this->saveTechContent();
+        }
+    }
+
+    private function showTechContent() {
         $post_type = self::CUSTOM_POST_TYPE;
-        $post = get_default_post_to_edit(self::CUSTOM_POST_TYPE, true);
+        $post = get_default_post_to_edit(self::CUSTOM_POST_TYPE);
 
         wp_enqueue_script('post');
         add_thickbox();
@@ -167,7 +175,7 @@ class TechVisualizations {
         ?>
         <div class="wrap">
             <h2>Add New Visualization Content</h2>
-            <form name="post" action="post.php" method="post" id="post"<?php do_action('post_edit_form_tag'); ?>>
+            <form name="post" action="<?php echo admin_url('admin.php?page=techContent'); ?>" method="post" id="post"<?php do_action('post_edit_form_tag'); ?>>
                 <div id="poststuff">
                     <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
                         <div id="post-body-content">
@@ -201,5 +209,8 @@ class TechVisualizations {
             </form>
         </div>
         <?php
+    }
+
+    private function saveTechContent() {
     }
 }
