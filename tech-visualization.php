@@ -155,5 +155,51 @@ class TechVisualizations {
     }
 
     public function showTechContent() {
+        $post_type = self::CUSTOM_POST_TYPE;
+        $post = get_default_post_to_edit(self::CUSTOM_POST_TYPE, true);
+
+        wp_enqueue_script('post');
+        add_thickbox();
+        wp_enqueue_script('media-upload');
+        require_once(ABSPATH . 'wp-admin/includes/meta-boxes.php');
+        add_meta_box('submitdiv', __('Publish'), 'post_submit_meta_box', self::CUSTOM_POST_TYPE, 'side', 'core');
+        add_meta_box('postimagediv', __('Featured Image'), 'post_thumbnail_meta_box', self::CUSTOM_POST_TYPE, 'side', 'low');
+        ?>
+        <div class="wrap">
+            <h2>Add New Visualization Content</h2>
+            <form name="post" action="post.php" method="post" id="post"<?php do_action('post_edit_form_tag'); ?>>
+                <div id="poststuff">
+                    <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
+                        <div id="post-body-content">
+                            <div id="titlediv">
+                                <div id="titlewrap">
+                                    <label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo __( 'Enter title here'); ?></label>
+                                    <input type="text" name="post_title" size="30" tabindex="1" value="" id="title" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div id="postdivrich" class="postarea">
+                                <?php wp_editor($post->post_content, 'content', array('dfw' => true, 'tabindex' => 1) ); ?>
+                                <table id="post-status-info" cellspacing="0">
+                                    <tbody>
+                                        <tr>
+                                            <td id="wp-word-count"><?php printf( __( 'Word count: %s' ), '<span class="word-count">0</span>' ); ?></td>
+                                            <td class="autosave-info">
+                                                <span class="autosave-message">&nbsp;</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="postbox-container-1" class="postbox-container">
+                            <?php do_action('submitpost_box');?>
+                            <?php do_meta_boxes($post_type, 'side', $post);?>
+                        </div>
+                    </div>
+                    <br class="clear" />
+                </div>
+            </form>
+        </div>
+        <?php
     }
 }
