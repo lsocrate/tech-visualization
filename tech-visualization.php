@@ -75,10 +75,24 @@ class TechVisualizations {
             "public" => false,
             "show_ui" => true,
             "menu_position" => 24,
-            "supports" => array('title','editor','thumbnail')
+            "supports" => array('title','editor','thumbnail'),
+            "register_meta_box_cb" => array(&$this, "setCustomPostTypeMetaboxes")
         );
 
         return register_post_type(self::CUSTOM_POST_TYPE, $args);
+    }
+
+    public function setCustomPostTypeMetaboxes() {
+        add_meta_box("positioning", "Positioning", array(&$this, "showPositionBox"), self::CUSTOM_POST_TYPE, "side", "low");
+    }
+
+    public function showPositionBox() {
+        ?>
+        <label style="display:block" class="positioning-coordinate">X1: <input type="number" name="positioning-x1"></label>
+        <label style="display:block" class="positioning-coordinate">Y1: <input type="number" name="positioning-y1"></label>
+        <label style="display:block" class="positioning-coordinate">X2: <input type="number" name="positioning-x2"></label>
+        <label style="display:block" class="positioning-coordinate">Y2: <input type="number" name="positioning-y2"></label>
+        <?php
     }
 
     public function saveVisualizationContentData($id, $post = null) {
