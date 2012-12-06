@@ -83,7 +83,14 @@ class TechVisualizations {
     }
 
     public function setCustomPostTypeMetaboxes() {
+        add_meta_box("visualization", "Visualization", array(&$this, "showVisualizationBox"), self::CUSTOM_POST_TYPE, "side", "low");
         add_meta_box("positioning", "Positioning", array(&$this, "showPositionBox"), self::CUSTOM_POST_TYPE, "side", "low");
+    }
+
+    public function showVisualizationBox() {
+        ?>
+        <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id"></label>
+        <?php
     }
 
     public function showPositionBox() {
