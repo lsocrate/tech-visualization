@@ -88,7 +88,9 @@ class TechVisualizations {
     }
 
     public function showVisualizationBox() {
+        wp_enqueue_script("visualization", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
         ?>
+        <p><a href="#" class="js-visualization-trigger">Choose visualization and set position.</a></p>
         <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id"></label>
         <?php
     }
