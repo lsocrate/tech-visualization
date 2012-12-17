@@ -1,18 +1,28 @@
 jQuery(function($){
   var modal;
 
+  var loadVisualizationMapper = function (visualizationId) {
+  }
+  var setVisualizationListEvents = function (modal) {
+    modal.on("click", ".image", function () {
+      visualizationId = $(this).parents("tr").data("visualizationId")
+      loadVisualizationMapper(visualizationId)
+    })
+  }
   var showModalBigBox = function (html) {
     if (!html) {
       return;
     }
 
     if (!modal) {
-      modal = $("<div/>", {id:"tv-modal"})
+      modal = $("<div/>", {id:"tv-modal"}).hide()
 
       $("body").append(modal)
     }
 
-    modal.html(html).show()
+    modal.html(html)
+    setVisualizationListEvents(modal)
+    modal.fadeIn()
   }
   var showVisualizationDefiner = function (ev) {
     ev.preventDefault()

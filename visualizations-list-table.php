@@ -30,6 +30,17 @@ class VisualizationsListTable extends WP_List_Table {
         return $columns;
     }
 
+    public function single_row($item) {
+        static $row_class = '';
+        $row_class = ($row_class == '') ? ' class="alternate"' : '';
+
+        $itemId = $item["ID"];
+
+        echo "<tr {$row_class} data-visualization-id='{$itemId}'>";
+        echo $this->single_row_columns( $item );
+        echo "</tr>";
+    }
+
     public function column_default($item, $column_name) {
         switch ($column_name) {
             case 'image':
