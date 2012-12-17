@@ -25,6 +25,13 @@ class TechVisualizations {
         add_action("admin_menu", array(&$this, "add_menu_page"));
         add_action("init", array(&$this, "setup_plugin"));
         add_action("save_post", array(&$this, "saveVisualizationContentData"));
+        add_action("wp_ajax_get_visualizations_list", array(&$this, "ajax_get_visualizations_list"));
+    }
+
+    public function ajax_get_visualizations_list() {
+        $visualizationIds = $this->getVisualizationIdList();
+        $this->showVisualizationsList($visualizationIds);
+        die();
     }
 
     public function setup_plugin() {
@@ -89,6 +96,7 @@ class TechVisualizations {
 
     public function showVisualizationBox() {
         wp_enqueue_script("visualization", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
+        wp_enqueue_style("visualization", plugins_url("tech-visualization/css/visualization-editor.css"));
         ?>
         <p><a href="#" class="js-visualization-trigger">Choose visualization and set position.</a></p>
         <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id"></label>
@@ -180,6 +188,10 @@ class TechVisualizations {
     }
 
     private function showVisualizationsList($idList) {
+        if (empty($idList)) {
+            return;
+        }
+
         $visualizationsTable = new VisualizationsListTable();
         $visualizationsTable->id_list = $idList;
         $visualizationsTable->prepare_items();
