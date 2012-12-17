@@ -26,6 +26,14 @@ class TechVisualizations {
         add_action("init", array(&$this, "setup_plugin"));
         add_action("save_post", array(&$this, "saveVisualizationContentData"));
         add_action("wp_ajax_get_visualizations_list", array(&$this, "ajax_get_visualizations_list"));
+        add_action("wp_ajax_get_visualization_mapper", array(&$this, "ajax_get_visualization_mapper"));
+    }
+
+    public function ajax_get_visualization_mapper() {
+        /**
+         * @todo
+         */
+        die();
     }
 
     public function ajax_get_visualizations_list() {

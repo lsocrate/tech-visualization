@@ -1,7 +1,16 @@
 jQuery(function($){
   var modal;
 
+  var showVisualizationMapper = function (html) {
+    /**
+     * @todo
+     */
+  }
   var loadVisualizationMapper = function (visualizationId) {
+    var requestData = {
+      action: "get_visualization_mapper"
+    }
+    $.post(ajaxurl, requestData, showVisualizationMapper)
   }
   var setVisualizationListEvents = function (modal) {
     modal.on("click", ".image", function () {
