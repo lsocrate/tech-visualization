@@ -1,14 +1,45 @@
 jQuery(function($){
-  var modal;
+  var modal
+  var mapper
 
+  var destroyModalBigBox = function (callback) {
+    modal.fadeOut(function (){
+      modal.remove()
+
+      if (callback) callback()
+    })
+  }
+  var setMapperEvents = function (mapper) {
+    mapper.on("click", function (ev) {
+      /**
+       * @todo  mapper events
+       */
+    })
+  }
+  var showMapper = function (imgHtml) {
+    if (!imgHtml) {
+      return
+    }
+
+    if (!mapper) {
+      mapper = $("<div/>", {id:"tv-mapper"}).hide()
+
+      $("body").append(mapper)
+    }
+
+    mapper.html(imgHtml)
+    setMapperEvents(mapper)
+    mapper.fadeIn()
+  }
   var showVisualizationMapper = function (html) {
-    /**
-     * @todo
-     */
+    destroyModalBigBox(function (){
+      showMapper(html)
+    })
   }
   var loadVisualizationMapper = function (visualizationId) {
     var requestData = {
-      action: "get_visualization_mapper"
+      action: "get_visualization_mapper",
+      visualizationId: visualizationId
     }
     $.post(ajaxurl, requestData, showVisualizationMapper)
   }

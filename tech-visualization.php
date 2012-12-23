@@ -30,9 +30,14 @@ class TechVisualizations {
     }
 
     public function ajax_get_visualization_mapper() {
-        /**
-         * @todo
-         */
+        if (!isset($_POST["visualizationId"])) {
+            die();
+        }
+
+        $visualizationId = (int) $_POST["visualizationId"];
+        $img = wp_get_attachment_image($visualizationId, "full");
+
+        echo $img;
         die();
     }
 
