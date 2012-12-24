@@ -16,8 +16,8 @@ jQuery(function($){
        */
     })
   }
-  var showMapper = function (imgHtml) {
-    if (!imgHtml) {
+  var showMapper = function (image) {
+    if (!image) {
       return
     }
 
@@ -27,13 +27,16 @@ jQuery(function($){
       $("body").append(mapper)
     }
 
-    mapper.html(imgHtml)
+    var mapperContent = $("<div/>", {class:"mapper-wrapper"}).append($("<img/>", {src:image.src}))
+
+    mapper.append(mapperContent)
     setMapperEvents(mapper)
     mapper.fadeIn()
   }
-  var showVisualizationMapper = function (html) {
+  var showVisualizationMapper = function (imageJson) {
     destroyModalBigBox(function (){
-      showMapper(html)
+      var image = JSON.parse(imageJson)
+      showMapper(image)
     })
   }
   var loadVisualizationMapper = function (visualizationId) {

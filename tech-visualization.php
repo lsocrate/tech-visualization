@@ -35,9 +35,19 @@ class TechVisualizations {
         }
 
         $visualizationId = (int) $_POST["visualizationId"];
-        $img = wp_get_attachment_image($visualizationId, "full");
+        $img = wp_get_attachment_image_src($visualizationId, "full");
 
-        echo $img;
+        if (empty($img)) {
+            die();
+        }
+
+        $image = array(
+            "src" => $img[0],
+            "width" => $img[1],
+            "height" => $img[2]
+        );
+
+        echo json_encode($image);
         die();
     }
 
