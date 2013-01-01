@@ -3,6 +3,7 @@ jQuery(function($){
   var mapper
 
   var confirmSelection = function () {
+    return window.confirm("Confirm mapping position?")
   }
   var setCoordinates = function (coordinates) {
   }
