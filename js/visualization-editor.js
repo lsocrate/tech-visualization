@@ -1,6 +1,8 @@
 jQuery(function($){
   var modal
+  var modalBg
   var mapper
+  var mapperBg
 
   var confirmSelection = function () {
     return window.confirm("Confirm mapping position?")
@@ -8,6 +10,7 @@ jQuery(function($){
   var destroyMapper = function (callback) {
     mapper.fadeOut(function () {
       mapper.remove()
+      mapperBg.remove()
 
       if (callback) callback()
     })
@@ -26,6 +29,7 @@ jQuery(function($){
   var destroyModalBigBox = function (callback) {
     modal.fadeOut(function (){
       modal.remove()
+      modalBg.remove()
 
       if (callback) callback()
     })
@@ -51,8 +55,9 @@ jQuery(function($){
 
     if (!mapper) {
       mapper = $("<div/>", {id:"tv-mapper"}).hide()
+      mapperBg = $("<div/>", {id:"tv-modal-bg"}).on("click", destroyMapper)
 
-      $("body").append(mapper)
+      $("body").append(mapper).append(mapperBg)
     }
 
     var imageObject = $("<img/>", {
@@ -90,8 +95,9 @@ jQuery(function($){
 
     if (!modal) {
       modal = $("<div/>", {id:"tv-modal"}).hide()
+      modalBg = $("<div/>", {id:"tv-modal-bg"}).on("click", destroyModalBigBox)
 
-      $("body").append(modal)
+      $("body").append(modal).append(modalBg)
     }
 
     modal.html(html)
