@@ -44,7 +44,8 @@ class TechVisualizations {
         $image = array(
             "src" => $img[0],
             "width" => $img[1],
-            "height" => $img[2]
+            "height" => $img[2],
+            "id" => $visualizationId
         );
 
         echo json_encode($image);
@@ -124,7 +125,7 @@ class TechVisualizations {
         wp_enqueue_style("jcrop", plugins_url("tech-visualization/css/jquery.Jcrop.min.css"));
         ?>
         <p><a href="#" class="js-visualization-trigger">Choose visualization and set position.</a></p>
-        <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id"></label>
+        <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id" id="visualization-id"></label>
         <?php
     }
 

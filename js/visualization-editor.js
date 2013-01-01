@@ -12,6 +12,9 @@ jQuery(function($){
       if (callback) callback()
     })
   }
+  var setVisualizationId = function (visualizationId) {
+    $("#visualization-id").val(visualizationId)
+  }
   var setCoordinates = function (coordinates) {
     var positioning = $("#positioning")
 
@@ -28,11 +31,14 @@ jQuery(function($){
     })
   }
   var setMapperEvents = function (mapper) {
-    mapper.find("img").Jcrop({
+    var visualization = mapper.find("img")
+
+    visualization.Jcrop({
       boxWidth: mapper.width(),
       onSelect: function (c) {
         if (confirmSelection()) {
           setCoordinates(c)
+          setVisualizationId($(visualization).data("id"))
           destroyMapper()
         }
       }
@@ -49,7 +55,10 @@ jQuery(function($){
       $("body").append(mapper)
     }
 
-    var mapperContent = $("<div/>", {class:"mapper-wrapper"}).append($("<img/>", {src:image.src}))
+    var imageObject = $("<img/>", {
+      src: image.src
+    }).data("id", image.id)
+    var mapperContent = $("<div/>", {class:"mapper-wrapper"}).append(imageObject)
 
     mapper.append(mapperContent)
     setMapperEvents(mapper)
