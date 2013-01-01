@@ -130,10 +130,10 @@ class TechVisualizations {
 
     public function showPositionBox() {
         ?>
-        <label style="display:block" class="positioning-coordinate">X1: <input type="number" name="positioning-x1"></label>
-        <label style="display:block" class="positioning-coordinate">Y1: <input type="number" name="positioning-y1"></label>
-        <label style="display:block" class="positioning-coordinate">X2: <input type="number" name="positioning-x2"></label>
-        <label style="display:block" class="positioning-coordinate">Y2: <input type="number" name="positioning-y2"></label>
+        <label style="display:block" class="positioning-coordinate">X1: <input type="number" name="positioning-x1" class="positioning-coordinate-x1"></label>
+        <label style="display:block" class="positioning-coordinate">Y1: <input type="number" name="positioning-y1" class="positioning-coordinate-y1"></label>
+        <label style="display:block" class="positioning-coordinate">X2: <input type="number" name="positioning-x2" class="positioning-coordinate-x2"></label>
+        <label style="display:block" class="positioning-coordinate">Y2: <input type="number" name="positioning-y2" class="positioning-coordinate-y2"></label>
         <?php
     }
 

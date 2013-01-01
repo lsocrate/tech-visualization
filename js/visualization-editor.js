@@ -13,6 +13,12 @@ jQuery(function($){
     })
   }
   var setCoordinates = function (coordinates) {
+    var positioning = $("#positioning")
+
+    positioning.find(".positioning-coordinate-x1").val(Math.round(coordinates.x))
+    positioning.find(".positioning-coordinate-y1").val(Math.round(coordinates.y))
+    positioning.find(".positioning-coordinate-x2").val(Math.round(coordinates.x2))
+    positioning.find(".positioning-coordinate-y2").val(Math.round(coordinates.y2))
   }
   var destroyModalBigBox = function (callback) {
     modal.fadeOut(function (){
