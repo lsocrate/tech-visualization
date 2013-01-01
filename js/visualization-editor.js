@@ -107,6 +107,10 @@ jQuery(function($){
 
     $.post(ajaxurl, requestData, showModalBigBox)
   }
+  var hideUselessInterface = function () {
+    $("#positioning, #visualization .visualization").hide()
+  }
 
+  hideUselessInterface()
   $("#visualization").on("click", ".js-visualization-trigger", showVisualizationDefiner)
 })
