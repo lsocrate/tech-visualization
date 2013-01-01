@@ -5,6 +5,13 @@ jQuery(function($){
   var confirmSelection = function () {
     return window.confirm("Confirm mapping position?")
   }
+  var destroyMapper = function (callback) {
+    mapper.fadeOut(function () {
+      mapper.remove()
+
+      if (callback) callback()
+    })
+  }
   var setCoordinates = function (coordinates) {
   }
   var destroyModalBigBox = function (callback) {
@@ -20,6 +27,7 @@ jQuery(function($){
       onSelect: function (c) {
         if (confirmSelection()) {
           setCoordinates(c)
+          destroyMapper()
         }
       }
     })
