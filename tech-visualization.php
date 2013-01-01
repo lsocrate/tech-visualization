@@ -120,6 +120,8 @@ class TechVisualizations {
     public function showVisualizationBox() {
         wp_enqueue_script("visualization", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
         wp_enqueue_style("visualization", plugins_url("tech-visualization/css/visualization-editor.css"));
+        wp_enqueue_script("jcrop", plugins_url("tech-visualization/js/jquery.Jcrop.min.js"), "jquery", false, true);
+        wp_enqueue_style("jcrop", plugins_url("tech-visualization/css/jquery.Jcrop.min.css"));
         ?>
         <p><a href="#" class="js-visualization-trigger">Choose visualization and set position.</a></p>
         <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id"></label>

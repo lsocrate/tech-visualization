@@ -2,6 +2,10 @@ jQuery(function($){
   var modal
   var mapper
 
+  var confirmSelection = function () {
+  }
+  var setCoordinates = function (coordinates) {
+  }
   var destroyModalBigBox = function (callback) {
     modal.fadeOut(function (){
       modal.remove()
@@ -10,10 +14,13 @@ jQuery(function($){
     })
   }
   var setMapperEvents = function (mapper) {
-    mapper.on("click", function (ev) {
-      /**
-       * @todo  mapper events
-       */
+    mapper.find("img").Jcrop({
+      boxWidth: mapper.width(),
+      onSelect: function (c) {
+        if (confirmSelection()) {
+          setCoordinates(c)
+        }
+      }
     })
   }
   var showMapper = function (image) {
