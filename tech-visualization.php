@@ -120,14 +120,23 @@ class TechVisualizations {
         add_meta_box("positioning", "Positioning", array(&$this, "showPositionBox"), self::CUSTOM_POST_TYPE, "side", "low");
     }
 
+    private function getVisualizationIdForPostId($postId) {
+        $sql = "SELECT attachment_id FROM {$this->db->tv_content} WHERE content_id = {$postId}";
+
+        return (int) $this->db->get_var($sql);
+    }
+
     public function showVisualizationBox() {
         wp_enqueue_script("visualization", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
         wp_enqueue_style("visualization", plugins_url("tech-visualization/css/visualization-editor.css"));
         wp_enqueue_script("jcrop", plugins_url("tech-visualization/js/jquery.Jcrop.min.js"), "jquery", false, true);
         wp_enqueue_style("jcrop", plugins_url("tech-visualization/css/jquery.Jcrop.min.css"));
+
+        $postId = get_the_ID();
+        $visualizationId = $this->getVisualizationIdForPostId($postId);
         ?>
         <p><a href="#" class="js-visualization-trigger">Choose visualization and set position.</a></p>
-        <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id" id="visualization-id"></label>
+        <label style="display:block" class="visualization">Visualization ID: <input type="number" name="visualization-id" id="visualization-id" value="<?php if ($visualizationId) echo $visualizationId;?>"></label>
         <?php
     }
 
