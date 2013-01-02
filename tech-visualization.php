@@ -16,6 +16,7 @@ class TechVisualizations {
     const CUSTOM_POST_TYPE = "visualizationcontent";
     const VISUALIZATION_META_KEY = "visualization";
     const VISUALIZATION_META_VALUE = "visualization";
+    const COORDINATES_META_KEY = "tv-coordinates";
 
     private $db;
 
@@ -91,6 +92,7 @@ class TechVisualizations {
               attachment_id int NOT NULL,
               content_id int NOT NULL,
               UNIQUE KEY id (id),
+              UNIQUE KEY content_id (content_id),
               KEY attachments (attachment_id, content_id)
             );";
 
@@ -140,6 +142,20 @@ class TechVisualizations {
 
     public function saveVisualizationContentData($id, $post = null) {
         if (isset($_POST["post_type"]) && $_POST["post_type"] == self::CUSTOM_POST_TYPE) {
+            $contentId = (int) $id;
+            $visualizationId = (int) $_POST["visualization-id"];
+
+            $coordinates = array(
+                "x1" => $_POST["positioning-x1"],
+                "y1" => $_POST["positioning-y1"],
+                "x2" => $_POST["positioning-x2"],
+                "y2" => $_POST["positioning-y2"]
+            );
+            $coordinatesJson = json_encode($coordinates);
+            update_post_meta($contentId, self::COORDINATES_META_KEY, $coordinatesJson);
+
+            $query = $this->db->prepare("INSERT INTO {$this->db->tv_content} (attachment_id, content_id) VALUES (%d, %d) ON DUPLICATE KEY UPDATE attachment_id = %d;", $visualizationId, $id, $visualizationId);
+            $this->db->query($query);
         }
     }
 
