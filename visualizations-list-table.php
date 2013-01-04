@@ -52,14 +52,23 @@ class VisualizationsListTable extends WP_List_Table {
         }
     }
 
+    private function getContentCount($visualizationId) {
+        global $wpdb;
+        $sql = $wpdb->prepare("SELECT count(1) FROM {$wpdb->tv_content} WHERE attachment_id = %d", $visualizationId);
+
+        return $wpdb->get_var($sql);
+    }
+
     private function getData() {
         foreach ($this->id_list as $id) {
             $post = get_post($id);
+            $contentCount = $this->getContentCount($id);
+
             $row = array(
                 "ID" => $post->ID,
                 "image" => wp_get_attachment_image($post->ID, "thumbnail"),
                 "file" => $post->post_title,
-                "contentCount" => 10
+                "contentCount" => $contentCount
             );
             $this->data[] = $row;
         }
