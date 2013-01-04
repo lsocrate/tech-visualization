@@ -91,6 +91,10 @@ class TechVisualizations {
               id int NOT NULL AUTO_INCREMENT,
               attachment_id int NOT NULL,
               content_id int NOT NULL,
+              x1 int NOT NULL,
+              y1 int NOT NULL,
+              x2 int NOT NULL,
+              y2 int NOT NULL,
               UNIQUE KEY id (id),
               UNIQUE KEY content_id (content_id),
               KEY attachments (attachment_id, content_id)
@@ -154,16 +158,22 @@ class TechVisualizations {
             $contentId = (int) $id;
             $visualizationId = (int) $_POST["visualization-id"];
 
-            $coordinates = array(
-                "x1" => $_POST["positioning-x1"],
-                "y1" => $_POST["positioning-y1"],
-                "x2" => $_POST["positioning-x2"],
-                "y2" => $_POST["positioning-y2"]
-            );
-            $coordinatesJson = json_encode($coordinates);
-            update_post_meta($contentId, self::COORDINATES_META_KEY, $coordinatesJson);
+            $x1 = (int) $_POST["positioning-x1"];
+            $y1 = (int) $_POST["positioning-y1"];
+            $x2 = (int) $_POST["positioning-x2"];
+            $y2 = (int) $_POST["positioning-y2"];
 
-            $query = $this->db->prepare("INSERT INTO {$this->db->tv_content} (attachment_id, content_id) VALUES (%d, %d) ON DUPLICATE KEY UPDATE attachment_id = %d;", $visualizationId, $id, $visualizationId);
+            $sql = "INSERT INTO {$this->db->tv_content} (attachment_id, content_id, x1, y1, x2, y2)
+                        VALUES (%d, %d, %d, %d, %d, %d)
+                    ON DUPLICATE KEY
+                        UPDATE
+                            attachment_id = %d,
+                            x1 = %d,
+                            y1 = %d,
+                            x2 = %d,
+                            y2 = %d;
+            ";
+            $query = $this->db->prepare($sql, $visualizationId, $id, $x1, $y1, $x2, $y2, $visualizationId, $x1, $y1, $x2, $y2);
             $this->db->query($query);
         }
     }
