@@ -144,12 +144,20 @@ class TechVisualizations {
         <?php
     }
 
+    private function getCoordinatesForPostId($postId) {
+        $sql = "SELECT * FROM {$this->db->tv_content} WHERE content_id = {$postId}";
+
+        return $this->db->get_row($sql);
+    }
+
     public function showPositionBox() {
+        $postId = get_the_ID();
+        $coordinates = $this->getCoordinatesForPostId($postId);
         ?>
-        <label style="display:block" class="positioning-coordinate">X1: <input type="number" name="positioning-x1" class="positioning-coordinate-x1"></label>
-        <label style="display:block" class="positioning-coordinate">Y1: <input type="number" name="positioning-y1" class="positioning-coordinate-y1"></label>
-        <label style="display:block" class="positioning-coordinate">X2: <input type="number" name="positioning-x2" class="positioning-coordinate-x2"></label>
-        <label style="display:block" class="positioning-coordinate">Y2: <input type="number" name="positioning-y2" class="positioning-coordinate-y2"></label>
+        <label style="display:block" class="positioning-coordinate">X1: <input type="number" name="positioning-x1" class="positioning-coordinate-x1" value="<?php if (!empty($coordinates->x1)) echo $coordinates->x1;?>"></label>
+        <label style="display:block" class="positioning-coordinate">Y1: <input type="number" name="positioning-y1" class="positioning-coordinate-y1" value="<?php if (!empty($coordinates->y1)) echo $coordinates->y1;?>"></label>
+        <label style="display:block" class="positioning-coordinate">X2: <input type="number" name="positioning-x2" class="positioning-coordinate-x2" value="<?php if (!empty($coordinates->x2)) echo $coordinates->x2;?>"></label>
+        <label style="display:block" class="positioning-coordinate">Y2: <input type="number" name="positioning-y2" class="positioning-coordinate-y2" value="<?php if (!empty($coordinates->y2)) echo $coordinates->y2;?>"></label>
         <?php
     }
 
