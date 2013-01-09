@@ -68,13 +68,12 @@ class VisualizationsListTable extends WP_List_Table {
     private function getData() {
         foreach ($this->id_list as $id) {
             $post = get_post($id);
-            $contentCount = $this->getContentCount($id);
 
             $row = array(
                 "ID" => $post->ID,
                 "image" => wp_get_attachment_image($post->ID, "thumbnail"),
                 "file" => $post->post_title,
-                "contentCount" => $contentCount,
+                "contentCount" => $this->getContentCount($id),
                 "shortcode" => $this->getShortcode($id)
             );
             $this->data[] = $row;
