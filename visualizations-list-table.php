@@ -24,7 +24,8 @@ class VisualizationsListTable extends WP_List_Table {
         $columns = array(
             "image" => "",
             "file" => "File",
-            "contentCount" => "Content Count"
+            "contentCount" => "Content Count",
+            "shortcode" => "Shortcode"
         );
 
         return $columns;
@@ -46,6 +47,7 @@ class VisualizationsListTable extends WP_List_Table {
             case 'image':
             case 'file':
             case 'contentCount':
+            case 'shortcode':
                 return $item[$column_name];
             default:
                 return print_r($item, true);
@@ -59,6 +61,10 @@ class VisualizationsListTable extends WP_List_Table {
         return $wpdb->get_var($sql);
     }
 
+    private function getShortcode($visualizationId) {
+        return sprintf('[tech-visualization id="%d"]', $visualizationId);
+    }
+
     private function getData() {
         foreach ($this->id_list as $id) {
             $post = get_post($id);
@@ -68,7 +74,8 @@ class VisualizationsListTable extends WP_List_Table {
                 "ID" => $post->ID,
                 "image" => wp_get_attachment_image($post->ID, "thumbnail"),
                 "file" => $post->post_title,
-                "contentCount" => $contentCount
+                "contentCount" => $contentCount,
+                "shortcode" => $this->getShortcode($id)
             );
             $this->data[] = $row;
         }
