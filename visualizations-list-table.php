@@ -24,8 +24,8 @@ class VisualizationsListTable extends WP_List_Table {
         $columns = array(
             "image" => "",
             "file" => "File",
-            "contentCount" => "Content Count",
-            "shortcode" => "Shortcode"
+            "shortcode" => "Shortcode",
+            "contentCount" => "Content Count"
         );
 
         return $columns;
@@ -73,8 +73,8 @@ class VisualizationsListTable extends WP_List_Table {
                 "ID" => $post->ID,
                 "image" => wp_get_attachment_image($post->ID, "thumbnail"),
                 "file" => $post->post_title,
-                "contentCount" => $this->getContentCount($id),
-                "shortcode" => $this->getShortcode($id)
+                "shortcode" => $this->getShortcode($id),
+                "contentCount" => $this->getContentCount($id)
             );
             $this->data[] = $row;
         }
