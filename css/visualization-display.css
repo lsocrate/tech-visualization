@@ -1,2 +1,14 @@
+.tv-visualization,
+.tv-visualization img {
+  width: 100%;
+}
 .tv-visualization {
+  position: relative;
+}
+.tv-visualization img {
+  z-index: 0;
+}
+.tv-visualization .tv-map {
+  position: absolute;
+  z-index: 1;
 }
