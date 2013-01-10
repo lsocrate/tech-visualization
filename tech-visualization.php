@@ -29,6 +29,40 @@ class TechVisualizations {
         add_action("delete_post", array(&$this, "deleteVisualizationContentData"));
         add_action("wp_ajax_get_visualizations_list", array(&$this, "ajax_get_visualizations_list"));
         add_action("wp_ajax_get_visualization_mapper", array(&$this, "ajax_get_visualization_mapper"));
+
+        add_filter("the_content", array(&$this, "include_visualization"));
+    }
+
+    private function getContentForVisualizationId($visualizationId) {
+        $sql = "SELECT content_id AS id, x1, y1, (x2 - x1) AS width, (y2 - y1) AS height FROM wp_tv_content WHERE attachment_id = %d";
+        $query = $this->db->prepare($sql, $visualizationId);
+
+        return $this->db->get_results($query);
+    }
+
+    private function removeSizingFromImageTag($tag) {
+        return preg_replace('/(width|height)="\d*"/s', "", $tag);
+    }
+
+    private function getVisualizationHtmlForMatches($matches) {
+        $visualizationId = (int) $matches[1];
+
+        $image = wp_get_attachment_image($visualizationId, "full");
+        $image = $this->removeSizingFromImageTag($image);
+        $contents = $this->getContentForVisualizationId($visualizationId);
+
+        $html = '<div class="tv-visualization">';
+        $html .= $image;
+        foreach ($contents as $content) {
+            $html .= sprintf('<div class="tv-map" data-id="%d" data-x1="%d" data-y1="%d" data-width="%d" data-height="%d"></div>', $content->id, $content->x1, $content->y1, $content->width, $content->height);
+        }
+        $html .= '</div>';
+
+        return $html;
+    }
+
+    public function include_visualization($content) {
+        return preg_replace_callback('/\[tech-visualization[^\]]*id="(\d*)"[^\]]*\]/s', array(&$this, "getVisualizationHtmlForMatches"), $content);
     }
 
     public function ajax_get_visualization_mapper() {
