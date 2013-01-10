@@ -65,6 +65,8 @@ class TechVisualizations {
     public function include_visualization($content) {
         if (preg_match($this->visualizationDisplayRegex, $content)) {
             wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
+            wp_enqueue_script("jquery");
+            wp_enqueue_script("visualization-display", plugins_url("tech-visualization/js/visualization-display.js"), "jquery", false, true);
 
             $content = preg_replace_callback($this->visualizationDisplayRegex, array(&$this, "getVisualizationHtmlForMatches"), $content);
         }
