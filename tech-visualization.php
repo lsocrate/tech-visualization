@@ -18,6 +18,7 @@ class TechVisualizations {
     const VISUALIZATION_META_VALUE = "visualization";
     const COORDINATES_META_KEY = "tv-coordinates";
 
+    private $visualizationDisplayRegex = '/\[tech-visualization[^\]]*id="(\d*)"[^\]]*\]/s';
     private $db;
 
     public function __construct(wpdb $database) {
@@ -62,7 +63,13 @@ class TechVisualizations {
     }
 
     public function include_visualization($content) {
-        return preg_replace_callback('/\[tech-visualization[^\]]*id="(\d*)"[^\]]*\]/s', array(&$this, "getVisualizationHtmlForMatches"), $content);
+        if (preg_match($this->visualizationDisplayRegex, $content)) {
+            wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
+
+            $content = preg_replace_callback($this->visualizationDisplayRegex, array(&$this, "getVisualizationHtmlForMatches"), $content);
+        }
+
+        return $content;
     }
 
     public function ajax_get_visualization_mapper() {
@@ -167,8 +174,8 @@ class TechVisualizations {
     }
 
     public function showVisualizationBox() {
-        wp_enqueue_script("visualization", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
-        wp_enqueue_style("visualization", plugins_url("tech-visualization/css/visualization-editor.css"));
+        wp_enqueue_script("visualization-editor", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
+        wp_enqueue_style("visualization-editor", plugins_url("tech-visualization/css/visualization-editor.css"));
         wp_enqueue_script("jcrop", plugins_url("tech-visualization/js/jquery.Jcrop.min.js"), "jquery", false, true);
         wp_enqueue_style("jcrop", plugins_url("tech-visualization/css/jquery.Jcrop.min.css"));
 
