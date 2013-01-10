@@ -26,6 +26,7 @@ class TechVisualizations {
         add_action("admin_menu", array(&$this, "add_menu_page"));
         add_action("init", array(&$this, "setup_plugin"));
         add_action("save_post", array(&$this, "saveVisualizationContentData"));
+        add_action("delete_post", array(&$this, "deleteVisualizationContentData"));
         add_action("wp_ajax_get_visualizations_list", array(&$this, "ajax_get_visualizations_list"));
         add_action("wp_ajax_get_visualization_mapper", array(&$this, "ajax_get_visualization_mapper"));
     }
@@ -97,7 +98,8 @@ class TechVisualizations {
               y2 int NOT NULL,
               UNIQUE KEY id (id),
               UNIQUE KEY content_id (content_id),
-              KEY attachments (attachment_id, content_id)
+              KEY attachments (attachment_id, content_id),
+              KEY contents (content_id, attachment_id)
             );";
 
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -159,6 +161,14 @@ class TechVisualizations {
         <label style="display:block" class="positioning-coordinate">X2: <input type="number" name="positioning-x2" class="positioning-coordinate-x2" value="<?php if (!empty($coordinates->x2)) echo $coordinates->x2;?>"></label>
         <label style="display:block" class="positioning-coordinate">Y2: <input type="number" name="positioning-y2" class="positioning-coordinate-y2" value="<?php if (!empty($coordinates->y2)) echo $coordinates->y2;?>"></label>
         <?php
+    }
+
+    public function deleteVisualizationContentData($contentId) {
+        $contentId =  (int) $contentId;
+        $sql = "DELETE FROM {$this->db->tv_content} WHERE content_id = %d;";
+        $query = $this->db->prepare($sql, $contentId);
+
+        return $this->db->query($query);
     }
 
     public function saveVisualizationContentData($id, $post = null) {
