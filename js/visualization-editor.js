@@ -36,9 +36,11 @@ jQuery(function($){
   }
   var setMapperEvents = function (mapper) {
     var visualization = mapper.find("img")
+    var visualizationData = visualization.data()
 
     visualization.Jcrop({
       boxWidth: mapper.width(),
+      trueSize: [visualizationData.width, visualizationData.height],
       onSelect: function (c) {
         if (confirmSelection()) {
           setCoordinates(c)
@@ -62,7 +64,11 @@ jQuery(function($){
 
     var imageObject = $("<img/>", {
       src: image.src
-    }).data("id", image.id)
+    }).data({
+      id:image.id,
+      width:image.width,
+      height:image.height
+    })
     var mapperContent = $("<div/>", {class:"mapper-wrapper"}).append(imageObject)
 
     mapper.append(mapperContent)
