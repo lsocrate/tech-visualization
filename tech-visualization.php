@@ -41,15 +41,15 @@ class TechVisualizations {
         return $this->db->get_results($query);
     }
 
-    private function removeSizingFromImageTag($tag) {
-        return preg_replace('/(width|height)="\d*"/s', "", $tag);
+    private function treatImageTag($tag) {
+        return preg_replace('/(width|height)="(\d*)"/s', 'data-original-$1="$2"', $tag);
     }
 
     private function getVisualizationHtmlForMatches($matches) {
         $visualizationId = (int) $matches[1];
 
         $image = wp_get_attachment_image($visualizationId, "full");
-        $image = $this->removeSizingFromImageTag($image);
+        $image = $this->treatImageTag($image);
         $contents = $this->getContentForVisualizationId($visualizationId);
 
         $html = '<div class="tv-visualization">';
