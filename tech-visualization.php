@@ -36,13 +36,28 @@ class TechVisualizations {
         add_filter("the_content", array(&$this, "include_visualization"));
     }
 
+    private function getFeaturedImageForPost($post) {
+        return wp_get_attachment_image(get_post_thumbnail_id($post->ID), "full");
+    }
+
     public function ajax_get_visualization_content() {
         if (!isset($_POST["contentId"])) {
             die();
         }
 
         $contentId = (int) $_POST["contentId"];
-
+        $post = get_post($contentId);
+        $featuredImage = $this->getFeaturedImageForPost($post);
+        $featuredImage = $this->treatImageTag($featuredImage);
+        ?>
+        <h1 class="tv-header"><?php echo $post->post_title;?></h1>
+        <div class="tv-content">
+            <?php echo $post->post_content;?>
+            <?php if (!empty($featuredImage)):?>
+            <div class="tv-featured-image"><?php echo $featuredImage;?></div>
+            <?php endif;?>
+        </div>
+        <?php
         die();
     }
 
