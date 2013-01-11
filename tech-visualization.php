@@ -30,8 +30,20 @@ class TechVisualizations {
         add_action("delete_post", array(&$this, "deleteVisualizationContentData"));
         add_action("wp_ajax_get_visualizations_list", array(&$this, "ajax_get_visualizations_list"));
         add_action("wp_ajax_get_visualization_mapper", array(&$this, "ajax_get_visualization_mapper"));
+        add_action("wp_ajax_get_visualization_content", array(&$this, "ajax_get_visualization_content"));
+        add_action("wp_ajax_nopriv_get_visualization_content", array(&$this, "ajax_get_visualization_content"));
 
         add_filter("the_content", array(&$this, "include_visualization"));
+    }
+
+    public function ajax_get_visualization_content() {
+        if (!isset($_POST["contentId"])) {
+            die();
+        }
+
+        $contentId = (int) $_POST["contentId"];
+
+        die();
     }
 
     private function getContentForVisualizationId($visualizationId) {
@@ -67,6 +79,7 @@ class TechVisualizations {
             wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
             wp_enqueue_script("jquery");
             wp_enqueue_script("visualization-display", plugins_url("tech-visualization/js/visualization-display.js"), "jquery", false, true);
+            wp_localize_script("visualization-display", 'TVAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
 
             $content = preg_replace_callback($this->visualizationDisplayRegex, array(&$this, "getVisualizationHtmlForMatches"), $content);
         }

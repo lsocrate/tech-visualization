@@ -1,4 +1,5 @@
 jQuery(function($){
+  var ajaxurl = TVAjax.ajaxurl
   var visualizations = [];
   var visualization = function (container) {
     var image = $("img", container)
@@ -18,7 +19,24 @@ jQuery(function($){
       $(this).css(positioning)
     }
 
+    var showContentModal = function (data) {
+    }
+
+    var requestContentModal = function (ev) {
+      ev.preventDefault()
+
+      var data = $(this).data()
+
+      var requestData = {
+        action: "get_visualization_content",
+        contentId: data.id
+      }
+
+      $.post(ajaxurl, requestData, showContentModal)
+    }
+
     $(contents).each(setPosition)
+    $(container).on("click", ".tv-map", requestContentModal)
   }
 
   $(".tv-visualization").each(function(){
