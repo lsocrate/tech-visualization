@@ -11,4 +11,5 @@
 .tv-visualization .tv-map {
   position: absolute;
   z-index: 1;
+  cursor: pointer;
 }
