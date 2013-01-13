@@ -1,6 +1,9 @@
 jQuery(function($){
   var ajaxurl = TVAjax.ajaxurl
   var visualizations = [];
+  var modal
+  var modalBg
+
   var visualization = function (container) {
     var image = $("img", container)
     var imageWidth = $(image).width()
@@ -19,7 +22,26 @@ jQuery(function($){
       $(this).css(positioning)
     }
 
-    var showContentModal = function (data) {
+    var destroyContentModal = function () {
+      modal.fadeOut(function(){
+        modal.hide().empty()
+        modalBg.hide().empty()
+      })
+    }
+
+    var showContentModal = function (html) {
+      if (!html) return
+
+      if (!modal) {
+        modal = $("<div/>", {id:"tv-modal"}).hide()
+        modalBg = $("<div/>", {id:"tv-modal-bg"}).on("click", destroyContentModal)
+
+        $("body").append(modal).append(modalBg)
+      }
+
+      modal.html(html)
+      modal.fadeIn()
+      modalBg.fadeIn()
     }
 
     var requestContentModal = function (ev) {
