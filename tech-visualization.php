@@ -10,6 +10,15 @@ require_once "visualizations-list-table.php";
 global $wpdb;
 new TechVisualizations($wpdb);
 
+function tv_print_visualization($visualizationId) {
+    global $wpdb;
+    $techVisualizations = new TechVisualizations($wpdb);
+
+    $techVisualizations->enqueueVisualizationAssets();
+
+    echo $techVisualizations->getVisualizationHTML($visualizationId);
+}
+
 class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
@@ -78,7 +87,7 @@ class TechVisualizations {
         return preg_replace('/(width|height)="(\d*)"/s', 'data-original-$1="$2"', $tag);
     }
 
-    private function enqueueVisualizationAssets() {
+    public function enqueueVisualizationAssets() {
         wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
         wp_enqueue_script("jquery");
         wp_enqueue_script("visualization-display", plugins_url("tech-visualization/js/visualization-display.js"), "jquery", false, true);
