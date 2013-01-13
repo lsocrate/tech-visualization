@@ -55,3 +55,11 @@ body {
   z-index: 9999;
   background: rgba(0,0,0,.65);
 }
+
+/**
+ * CUSTOMIZE TO YOUR TEMPLATE
+ */
+.tv-header {
+}
+.tv-text {
+}
