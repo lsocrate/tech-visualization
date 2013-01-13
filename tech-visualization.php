@@ -78,8 +78,15 @@ class TechVisualizations {
         return preg_replace('/(width|height)="(\d*)"/s', 'data-original-$1="$2"', $tag);
     }
 
-    private function getVisualizationHtmlForMatches($matches) {
-        $visualizationId = (int) $matches[1];
+    private function enqueueVisualizationAssets() {
+        wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
+        wp_enqueue_script("jquery");
+        wp_enqueue_script("visualization-display", plugins_url("tech-visualization/js/visualization-display.js"), "jquery", false, true);
+        wp_localize_script("visualization-display", 'TVAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+    }
+
+    public function getVisualizationHTML($visualizationId) {
+        $this->enqueueVisualizationAssets();
 
         $image = wp_get_attachment_image($visualizationId, "full");
         $image = $this->treatImageTag($image);
@@ -95,13 +102,15 @@ class TechVisualizations {
         return $html;
     }
 
+    private function getVisualizationHtmlForMatches($matches) {
+        $visualizationId = (int) $matches[1];
+
+        return $this->getVisualizationHTML($visualizationId);
+    }
+
     public function include_visualization($content) {
         if (preg_match($this->visualizationDisplayRegex, $content)) {
-            wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
-            wp_enqueue_script("jquery");
-            wp_enqueue_script("visualization-display", plugins_url("tech-visualization/js/visualization-display.js"), "jquery", false, true);
-            wp_localize_script("visualization-display", 'TVAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
-
+            $this->enqueueVisualizationAssets();
             $content = preg_replace_callback($this->visualizationDisplayRegex, array(&$this, "getVisualizationHtmlForMatches"), $content);
         }
 
