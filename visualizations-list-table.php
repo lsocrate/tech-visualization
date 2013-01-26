@@ -26,7 +26,7 @@ class VisualizationsListTable extends WP_List_Table {
             "file" => "File",
             "shortcode" => "Shortcode",
             "widget" => "Widget",
-            "contentCount" => "Content Count"
+            "content" => "Content"
         );
 
         return $columns;
@@ -39,7 +39,7 @@ class VisualizationsListTable extends WP_List_Table {
         $itemId = $item["ID"];
 
         echo "<tr {$row_class} data-visualization-id='{$itemId}'>";
-        echo $this->single_row_columns( $item );
+        echo $this->single_row_columns($item);
         echo "</tr>";
     }
 
@@ -47,7 +47,7 @@ class VisualizationsListTable extends WP_List_Table {
         switch ($column_name) {
             case 'image':
             case 'file':
-            case 'contentCount':
+            case 'content':
             case 'shortcode':
             case 'widget':
                 return $item[$column_name];
@@ -61,6 +61,25 @@ class VisualizationsListTable extends WP_List_Table {
         $sql = $wpdb->prepare("SELECT count(1) FROM {$wpdb->tv_content} WHERE attachment_id = %d", $visualizationId);
 
         return $wpdb->get_var($sql);
+    }
+
+    private function getContent($visualizationId) {
+        global $wpdb;
+        $sql = $wpdb->prepare("SELECT content_id FROM {$wpdb->tv_content} WHERE attachment_id = %d", $visualizationId);
+        $contentIds = $wpdb->get_col($sql);
+
+        $query = new WP_Query(array(
+            "post__in" => $contentIds,
+            "post_type" => "visualizationcontent"
+        ));
+
+        $html = array();
+        foreach ($query->posts as $post) {
+            $editLink = get_edit_post_link($post->ID);
+            $html[] = "<p><a href='$editLink'>{$post->post_title}</a></p>";
+        }
+
+        return implode("", $html);
     }
 
     private function getShortcode($visualizationId) {
@@ -83,7 +102,7 @@ class VisualizationsListTable extends WP_List_Table {
                 "file" => $post->post_title,
                 "shortcode" => $this->getShortcode($id),
                 "widget" => "<pre>" . $this->getWidget($id) . "</pre>",
-                "contentCount" => $this->getContentCount($id)
+                "content" => $this->getContent($id)
             );
             $this->data[] = $row;
         }
