@@ -69,7 +69,7 @@ jQuery(function($){
       width:image.width,
       height:image.height
     })
-    var mapperContent = $("<div/>", {class:"mapper-wrapper"}).append(imageObject)
+    var mapperContent = $("<div/>", {"class":"mapper-wrapper"}).append(imageObject)
 
     mapper.append(mapperContent)
     setMapperEvents(mapper)
