@@ -55,8 +55,13 @@ class TechVisualizations {
         if (!isset($_REQUEST["visualizationId"])) {
             die();
         }
+        $visualizationId = (int) $_REQUEST["visualizationId"];
 
         $result = array(
+            "html" => $this->getVisualizationHTML($visualizationId),
+            "css" => array(
+                plugins_url("tech-visualization/css/visualization-display.css")
+            )
         );
 
         echo 'jsonp_transfer(' . json_encode($result) . ')';

@@ -40,7 +40,18 @@
     })
   }
 
-  window.jsonp_transfer = function (json_data) {
+  window.jsonp_transfer = function (data) {
     var $ = jQuery
+
+    for (var i = data.css.length - 1; i >= 0; i--) {
+      var cssHref = data.css[i]
+      var css = $("<link>", {
+        rel: "stylesheet",
+        href: cssHref
+      })
+      css.appendTo("head")
+    };
+
+    container.html(data.html)
   }
 })()
