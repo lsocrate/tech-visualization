@@ -69,29 +69,31 @@ class TechVisualizations {
     }
 
     public function ajax_get_visualization_content() {
-        if (!isset($_POST["contentId"])) {
+        if (!isset($_REQUEST["contentId"])) {
             die();
         }
 
-        $contentId = (int) $_POST["contentId"];
+        $contentId = (int) $_REQUEST["contentId"];
         $post = get_post($contentId);
         $featuredImage = $this->getFeaturedImageForPost($post);
         $featuredImage = $this->treatImageTag($featuredImage);
-        ?>
-        <div class="tv-content <?php echo (empty($featuredImage)) ? 'cols1' : 'cols2'; ?>">
-            <div class="tv-content">
-                <h1 class="tv-header"><?php echo $post->post_title;?></h1>
-                <div class="tv-text">
-                    <?php echo $post->post_content;?>
-                </div>
-            </div>
-            <?php if (!empty($featuredImage)):?>
-            <div class="tv-featured-image">
-                <?php echo $featuredImage;?>
-            </div>
-        </div>
-        <?php endif;?>
-        <?php
+
+        $columns = (empty($featuredImage)) ? 'cols1' : 'cols2';
+        $featuredImageHtml = (!empty($featuredImage)) ? "<div class='tv-featured-image'>$featuredImage</div>" : "";
+
+        $html = "<div class='tv-content $columns'>";
+            $html .= "<div class='tv-content'>";
+                $html .= "<h1 class='tv-header'>{$post->post_title}</h1>";
+                $html .= "<div class='tv-text'>{$post->post_content}</div>";
+            $html .= "</div>";
+            $html .= "$featuredImageHtml";
+        $html .= "</div>";
+
+        if (isset($_REQUEST["callback"])) {
+            echo 'showContentModal(' . json_encode($html) . ')';
+        } else {
+            echo $html;
+        }
         die();
     }
 

@@ -3,6 +3,8 @@
   var $
   var ajaxurl = "http://tech.dev/wp-admin/admin-ajax.php?callback=?"
   var container
+  var modal
+  var modalBg
 
   if (typeof window.jQuery == "undefined") {
     var scriptTag = document.createElement("script")
@@ -68,7 +70,7 @@
       })
     }
 
-    var showContentModal = function (html) {
+    window.showContentModal = function (html) {
       if (!html) return
 
       if (!modal) {
@@ -93,7 +95,7 @@
         contentId: data.id
       }
 
-      $.post(ajaxurl, requestData, showContentModal)
+      $.getJSON(ajaxurl, requestData)
     }
 
     $(contents).each(setPosition)
