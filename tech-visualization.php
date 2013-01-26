@@ -41,12 +41,26 @@ class TechVisualizations {
         add_action("wp_ajax_get_visualization_mapper", array(&$this, "ajax_get_visualization_mapper"));
         add_action("wp_ajax_get_visualization_content", array(&$this, "ajax_get_visualization_content"));
         add_action("wp_ajax_nopriv_get_visualization_content", array(&$this, "ajax_get_visualization_content"));
+        add_action("wp_ajax_get_visualization", array(&$this, "ajax_get_visualization"));
+        add_action("wp_ajax_nopriv_get_visualization", array(&$this, "ajax_get_visualization"));
 
         add_filter("the_content", array(&$this, "include_visualization"));
     }
 
     private function getFeaturedImageForPost($post) {
         return wp_get_attachment_image(get_post_thumbnail_id($post->ID), "full");
+    }
+
+    public function ajax_get_visualization() {
+        if (!isset($_REQUEST["visualizationId"])) {
+            die();
+        }
+
+        $result = array(
+        );
+
+        echo 'jsonp_transfer(' . json_encode($result) . ')';
+        die();
     }
 
     public function ajax_get_visualization_content() {
