@@ -25,6 +25,7 @@ class VisualizationsListTable extends WP_List_Table {
             "image" => "",
             "file" => "File",
             "shortcode" => "Shortcode",
+            "widget" => "Widget",
             "contentCount" => "Content Count"
         );
 
@@ -48,6 +49,7 @@ class VisualizationsListTable extends WP_List_Table {
             case 'file':
             case 'contentCount':
             case 'shortcode':
+            case 'widget':
                 return $item[$column_name];
             default:
                 return print_r($item, true);
@@ -65,6 +67,12 @@ class VisualizationsListTable extends WP_List_Table {
         return sprintf('[tech-visualization id="%d"]', $visualizationId);
     }
 
+    private function getWidget($visualizationId) {
+        $html = "<div id='envisioning-technology-visualization' data-visualization-id='%d'></div>\n<script src='%s'></script>";
+        $widgetJS = plugins_url("tech-visualization/js/visualization-widget.js");
+        return htmlspecialchars(sprintf($html, $visualizationId, $widgetJS));
+    }
+
     private function getData() {
         foreach ($this->id_list as $id) {
             $post = get_post($id);
@@ -74,6 +82,7 @@ class VisualizationsListTable extends WP_List_Table {
                 "image" => wp_get_attachment_image($post->ID, "thumbnail"),
                 "file" => $post->post_title,
                 "shortcode" => $this->getShortcode($id),
+                "widget" => "<pre>" . $this->getWidget($id) . "</pre>",
                 "contentCount" => $this->getContentCount($id)
             );
             $this->data[] = $row;
