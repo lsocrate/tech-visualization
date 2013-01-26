@@ -64,7 +64,7 @@ class TechVisualizations {
             )
         );
 
-        echo 'jsonp_transfer(' . json_encode($result) . ')';
+        echo 'tech_visualization(' . json_encode($result) . ')';
         die();
     }
 
