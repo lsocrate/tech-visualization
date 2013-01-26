@@ -26,6 +26,12 @@ class TechVisualizations {
     const VISUALIZATION_META_KEY = "visualization";
     const VISUALIZATION_META_VALUE = "visualization";
     const COORDINATES_META_KEY = "tv-coordinates";
+    const CSS_DISPLAY = "tech-visualization/css/visualization-display.css";
+    const JS_DISPLAY = "tech-visualization/js/visualization-display.min.js";
+    const CSS_EDITOR = "tech-visualization/css/visualization-editor.css";
+    const JS_EDITOR = "tech-visualization/js/visualization-editor.min.js";
+    const CSS_JCROP = "tech-visualization/css/jquery.Jcrop.min.css";
+    const JS_JCROP = "tech-visualization/js/jquery.Jcrop.min.js";
 
     private $visualizationDisplayRegex = '/\[tech-visualization[^\]]*id="(\d*)"[^\]]*\]/s';
     private $db;
@@ -60,7 +66,7 @@ class TechVisualizations {
         $result = array(
             "html" => $this->getVisualizationHTML($visualizationId),
             "css" => array(
-                plugins_url("tech-visualization/css/visualization-display.css")
+                plugins_url(self::CSS_DISPLAY)
             )
         );
 
@@ -109,9 +115,9 @@ class TechVisualizations {
     }
 
     public function enqueueVisualizationAssets() {
-        wp_enqueue_style("visualization-display", plugins_url("tech-visualization/css/visualization-display.css"));
+        wp_enqueue_style("visualization-display", plugins_url(self::CSS_DISPLAY));
         wp_enqueue_script("jquery");
-        wp_enqueue_script("visualization-display", plugins_url("tech-visualization/js/visualization-display.js"), "jquery", false, true);
+        wp_enqueue_script("visualization-display", plugins_url(self::JS_DISPLAY), "jquery", false, true);
         wp_localize_script("visualization-display", 'TVAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
@@ -249,10 +255,10 @@ class TechVisualizations {
     }
 
     public function showVisualizationBox() {
-        wp_enqueue_script("visualization-editor", plugins_url("tech-visualization/js/visualization-editor.js"), "jquery", false, true);
-        wp_enqueue_style("visualization-editor", plugins_url("tech-visualization/css/visualization-editor.css"));
-        wp_enqueue_script("jcrop", plugins_url("tech-visualization/js/jquery.Jcrop.min.js"), "jquery", false, true);
-        wp_enqueue_style("jcrop", plugins_url("tech-visualization/css/jquery.Jcrop.min.css"));
+        wp_enqueue_script("visualization-editor", plugins_url(self::JS_EDITOR), "jquery", false, true);
+        wp_enqueue_style("visualization-editor", plugins_url(self::CSS_EDITOR));
+        wp_enqueue_script("jcrop", plugins_url(self::JS_JCROP), "jquery", false, true);
+        wp_enqueue_style("jcrop", plugins_url(self::CSS_JCROP));
 
         $postId = get_the_ID();
         $visualizationId = $this->getVisualizationIdForPostId($postId);
