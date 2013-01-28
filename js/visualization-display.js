@@ -45,7 +45,13 @@ jQuery(function($){
     }
 
     var setHashForTechnologyId = function (technologyId) {
+      var oldHash = window.location.hash
+      var newHash = "technology-" + technologyId
+
       window.location.hash = "technology-" + technologyId
+
+      var newHashRegex = new RegExp("^#?" + newHash + "$")
+      return !oldHash.match(newHashRegex)
     }
 
     var requestContentModalForTechnologyId = function (technologyId) {
@@ -61,7 +67,12 @@ jQuery(function($){
       ev.preventDefault()
 
       var technologyId = $(this).data("id")
-      setHashForTechnologyId(technologyId)
+
+      if (!technologyId) return
+
+      if (!setHashForTechnologyId(technologyId)) {
+        requestContentModalForTechnologyId(technologyId)
+      }
     }
 
     var checkHashAndRequestModalIfNeeded = function () {
