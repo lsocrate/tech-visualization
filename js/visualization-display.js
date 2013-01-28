@@ -44,6 +44,10 @@ jQuery(function($){
       modalBg.fadeIn()
     }
 
+    var setHashForTechnologyId = function (technologyId) {
+      window.location.hash = "technology-" + technologyId
+    }
+
     var requestContentModalForTechnologyId = function (technologyId) {
       var requestData = {
         action: "get_visualization_content",
@@ -53,11 +57,11 @@ jQuery(function($){
       $.post(ajaxurl, requestData, showContentModal)
     }
 
-    var loadTechnologyModal = function (ev) {
+    var setTechnologyModal = function (ev) {
       ev.preventDefault()
 
       var technologyId = $(this).data("id")
-      requestContentModalForTechnologyId(technologyId)
+      setHashForTechnologyId(technologyId)
     }
 
     var checkHashAndRequestModalIfNeeded = function () {
@@ -73,7 +77,8 @@ jQuery(function($){
     }
 
     $(contents).each(setPosition)
-    $(container).on("click", ".tv-map", loadTechnologyModal)
+    $(container).on("click", ".tv-map", setTechnologyModal)
+
     window.onhashchange = checkHashAndRequestModalIfNeeded
     checkHashAndRequestModalIfNeeded()
   }
