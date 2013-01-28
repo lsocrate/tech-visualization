@@ -44,21 +44,38 @@ jQuery(function($){
       modalBg.fadeIn()
     }
 
-    var requestContentModal = function (ev) {
-      ev.preventDefault()
-
-      var data = $(this).data()
-
+    var requestContentModalForTechnologyId = function (technologyId) {
       var requestData = {
         action: "get_visualization_content",
-        contentId: data.id
+        contentId: technologyId
       }
 
       $.post(ajaxurl, requestData, showContentModal)
     }
 
+    var loadTechnologyModal = function (ev) {
+      ev.preventDefault()
+
+      var technologyId = $(this).data("id")
+      requestContentModalForTechnologyId(technologyId)
+    }
+
+    var checkHashAndRequestModalIfNeeded = function () {
+      var hash = window.location.hash
+      var matches = hash.match(/#technology\-(\d*)$/)
+      var technologyId = matches && matches[1]
+      if (technologyId) {
+        var technology = $(contents).filter("[data-id=" + technologyId + "]")
+        if (technology) {
+          requestContentModalForTechnologyId(technology.data("id"))
+        }
+      }
+    }
+
     $(contents).each(setPosition)
-    $(container).on("click", ".tv-map", requestContentModal)
+    $(container).on("click", ".tv-map", loadTechnologyModal)
+    window.onhashchange = checkHashAndRequestModalIfNeeded
+    checkHashAndRequestModalIfNeeded()
   }
 
   $(".tv-visualization").each(function(){
