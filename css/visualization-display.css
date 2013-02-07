@@ -19,7 +19,6 @@ body {
 #tv-modal {
   padding: 35px 20px;
   position: absolute;
-  top: 75px;
   width: 840px;
   left: 50%;
   margin-left: -440px;

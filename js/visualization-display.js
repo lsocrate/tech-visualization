@@ -39,8 +39,11 @@ jQuery(function($){
         $("body").append(modal).append(modalBg)
       }
 
-      modal.html(html)
-      modal.add(modalBg).fadeIn(400, callback)
+      if (typeof callback === "function") callback()
+
+      var modalPosition = ($(document).scrollTop() + 20) + "px"
+      modal.html(html).css("top", modalPosition)
+      modal.add(modalBg).fadeIn()
     }
 
     var setHashForTechnologyId = function (technologyId) {
