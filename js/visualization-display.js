@@ -29,7 +29,7 @@ jQuery(function($){
       })
     }
 
-    var showContentModal = function (html) {
+    var showContentModal = function (html, callback) {
       if (!html) return
 
       if (!modal) {
@@ -40,8 +40,7 @@ jQuery(function($){
       }
 
       modal.html(html)
-      modal.fadeIn()
-      modalBg.fadeIn()
+      modal.add(modalBg).fadeIn(400, callback)
     }
 
     var setHashForTechnologyId = function (technologyId) {
@@ -54,13 +53,15 @@ jQuery(function($){
       return !oldHash.match(newHashRegex)
     }
 
-    var requestContentModalForTechnologyId = function (technologyId) {
+    var requestContentModalForTechnologyId = function (technologyId, callback) {
       var requestData = {
         action: "get_visualization_content",
         contentId: technologyId
       }
 
-      $.post(ajaxurl, requestData, showContentModal)
+      $.post(ajaxurl, requestData, function(html) {
+        showContentModal(html, callback)
+      })
     }
 
     var setTechnologyModal = function (ev) {
@@ -75,14 +76,25 @@ jQuery(function($){
       }
     }
 
-    var checkHashAndRequestModalIfNeeded = function () {
+    var scrollToVisualization = function () {
+      var scrollPosition = $(document).scrollTop()
+      var visualizationTop = $(container).offset().top
+      var visualizationBottom = visualizationTop + $(container).height()
+
+      if (scrollPosition < visualizationTop || scrollPosition > visualizationBottom) {
+        $(document).scrollTop(visualizationTop)
+      }
+    }
+
+    var checkHashAndRequestModalIfNeeded = function (ev) {
       var hash = window.location.hash
       var matches = hash.match(/#technology\-(\d*)$/)
       var technologyId = matches && matches[1]
       if (technologyId) {
         var technology = $(contents).filter("[data-id=" + technologyId + "]")
         if (technology) {
-          requestContentModalForTechnologyId(technology.data("id"))
+          var callback = (!ev) ? scrollToVisualization : null;
+          requestContentModalForTechnologyId(technology.data("id"), callback)
         }
       }
     }
