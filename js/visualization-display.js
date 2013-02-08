@@ -29,12 +29,16 @@ jQuery(function($){
       })
     }
 
+    var cleanHash = function () {
+      window.location.hash = ""
+    }
+
     var showContentModal = function (html, callback) {
       if (!html) return
 
       if (!modal) {
         modal = $("<div/>", {id:"tv-modal"}).hide()
-        modalBg = $("<div/>", {id:"tv-modal-bg"}).on("click", destroyContentModal)
+        modalBg = $("<div/>", {id:"tv-modal-bg"}).on("click", cleanHash)
 
         $("body").append(modal).append(modalBg)
       }
@@ -91,6 +95,7 @@ jQuery(function($){
 
     var checkHashAndRequestModalIfNeeded = function (ev) {
       var hash = window.location.hash
+      if (!hash) return destroyContentModal()
       var matches = hash.match(/#technology\-(\d*)$/)
       var technologyId = matches && matches[1]
       if (technologyId) {
