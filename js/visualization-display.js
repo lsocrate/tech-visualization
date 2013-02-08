@@ -95,7 +95,7 @@ jQuery(function($){
 
     var checkHashAndRequestModalIfNeeded = function (ev) {
       var hash = window.location.hash
-      if (!hash || hash = "#") return destroyContentModal()
+      if (!hash || hash == "#") return destroyContentModal()
       var matches = hash.match(/#technology\-(\d*)$/)
       var technologyId = matches && matches[1]
       if (technologyId) {
