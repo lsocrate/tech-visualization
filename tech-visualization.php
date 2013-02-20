@@ -104,7 +104,18 @@ class TechVisualizations {
     }
 
     private function getContentForVisualizationId($visualizationId) {
-        $sql = "SELECT content_id AS id, x1, y1, (x2 - x1) AS width, (y2 - y1) AS height FROM wp_tv_content WHERE attachment_id = %d";
+        $sql = "SELECT
+                    content.content_id AS id,
+                    content.x1,
+                    content.y1,
+                    (content.x2 - content.x1) AS width,
+                    (content.y2 - content.y1) AS height,
+                    posts.post_name AS slug
+                FROM
+                    {$this->db->tv_content} AS content
+                INNER JOIN
+                    {$this->db->posts} AS posts ON posts.id = content.content_id
+                WHERE content.attachment_id = %d";
         $query = $this->db->prepare($sql, $visualizationId);
 
         return $this->db->get_results($query);
@@ -131,7 +142,7 @@ class TechVisualizations {
         $html = '<div class="tv-visualization">';
         $html .= $image;
         foreach ($contents as $content) {
-            $html .= sprintf('<div class="tv-map" data-id="%d" data-x1="%d" data-y1="%d" data-width="%d" data-height="%d"></div>', $content->id, $content->x1, $content->y1, $content->width, $content->height);
+            $html .= sprintf('<div class="tv-map" data-id="%d" data-slug="%s" data-x1="%d" data-y1="%d" data-width="%d" data-height="%d"></div>', $content->id, $content->slug, $content->x1, $content->y1, $content->width, $content->height);
         }
         $html .= '</div>';
 

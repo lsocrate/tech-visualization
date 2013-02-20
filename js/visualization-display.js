@@ -50,11 +50,11 @@ jQuery(function($){
       modal.add(modalBg).fadeIn()
     }
 
-    var setHashForTechnologyId = function (technologyId) {
+    var setHashForTechnologySlug = function (technologySlug) {
       var oldHash = window.location.hash
-      var newHash = "technology-" + technologyId
+      var newHash = "technology-" + technologySlug
 
-      window.location.hash = "technology-" + technologyId
+      window.location.hash = "technology-" + technologySlug
 
       var newHashRegex = new RegExp("^#?" + newHash + "$")
       return !oldHash.match(newHashRegex)
@@ -75,10 +75,11 @@ jQuery(function($){
       ev.preventDefault()
 
       var technologyId = $(this).data("id")
+      var technologySlug = $(this).data("slug")
 
       if (!technologyId) return
 
-      if (!setHashForTechnologyId(technologyId)) {
+      if (!setHashForTechnologySlug(technologySlug)) {
         requestContentModalForTechnologyId(technologyId)
       }
     }
@@ -96,10 +97,10 @@ jQuery(function($){
     var checkHashAndRequestModalIfNeeded = function (ev) {
       var hash = window.location.hash
       if (!hash || hash == "#") return destroyContentModal()
-      var matches = hash.match(/#technology\-(\d*)$/)
-      var technologyId = matches && matches[1]
-      if (technologyId) {
-        var technology = $(contents).filter("[data-id=" + technologyId + "]")
+      var matches = hash.match(/#technology\-(.*)$/)
+      var technologySlug = matches && matches[1]
+      if (technologySlug) {
+        var technology = $(contents).filter("[data-slug=" + technologySlug + "]")
         if (technology) {
           var callback = (!ev) ? scrollToVisualization : null;
           requestContentModalForTechnologyId(technology.data("id"), callback)
