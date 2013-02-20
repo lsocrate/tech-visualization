@@ -29,7 +29,7 @@ class TechVisualizations {
     const CSS_DISPLAY = "tech-visualization/css/visualization-display.css";
     const JS_DISPLAY = "tech-visualization/js/visualization-display-v2.js";
     const CSS_EDITOR = "tech-visualization/css/visualization-editor.css";
-    const JS_EDITOR = "tech-visualization/js/visualization-editor.js";
+    const JS_EDITOR = "tech-visualization/js/visualization-editor-v2.js";
     const CSS_JCROP = "tech-visualization/css/jquery.Jcrop.min.css";
     const JS_JCROP = "tech-visualization/js/jquery.Jcrop.min.js";
 
