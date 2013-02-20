@@ -11,17 +11,9 @@ jQuery(($) ->
   mapper = null
   mapperBg = null
 
-  destroyModalBigBox = (callback) ->
-    modal.fadeOut(->
+  destroyModal = (modal, modalBg, callback) ->
+    modal.fadeOut( ->
       modal.add(modalBg).remove()
-
-      callback() if typeof callback is "function"
-    )
-
-  destroyMapper = (callback) ->
-    mapper.fadeOut(->
-      mapper.add(mapperBg).remove()
-
       callback() if typeof callback is "function"
     )
 
@@ -50,7 +42,7 @@ jQuery(($) ->
         if confirmSelection()
           setCoordinates(coordinates)
           setVisualizationId($(visualization).data("id"))
-          destroyMapper()
+          destroyModal(mapper, mapperBg)
     })
 
   showMapper = (image) ->
@@ -58,7 +50,7 @@ jQuery(($) ->
 
     unless mapper
       mapper = $("<div/>", {id:"tv-mapper"}).hide()
-      mapperBg = $("<div/>", {id:"tv-modal-bg"}).on("click", destroyMapper)
+      mapperBg = $("<div/>", {id:"tv-modal-bg"}).on("click", -> destroyModal(mapper, mapperBg))
 
       $("body").append(mapper).append(mapperBg)
 
@@ -77,7 +69,7 @@ jQuery(($) ->
     mapper.fadeIn()
 
   showVisualizationMapper = (imageJson) ->
-    destroyModalBigBox( ->
+    destroyModal(modal, modalBg, ->
       image = JSON.parse(imageJson)
       showMapper(image)
     )
@@ -100,7 +92,7 @@ jQuery(($) ->
 
     unless modal
       modal = $("<div/>", {id:"tv-modal"}).hide()
-      modalBg = $("<div/>", {id:"tv-modal-bg"}).on(CLICK, destroyModalBigBox)
+      modalBg = $("<div/>", {id:"tv-modal-bg"}).on(CLICK, -> destroyModal(modal, modalBg))
 
       $("body").append(modal).append(modalBg)
 

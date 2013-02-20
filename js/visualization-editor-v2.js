@@ -2,7 +2,7 @@
 (function() {
 
   jQuery(function($) {
-    var CLICK, confirmSelection, destroyMapper, destroyModalBigBox, hideUselessInterface, loadVisualizationMapper, mapper, mapperBg, modal, modalBg, setCoordinates, setMapperEvents, setVisualizationId, setVisualizationListEvents, showMapper, showModalBigBox, showVisualizationDefiner, showVisualizationMapper;
+    var CLICK, confirmSelection, destroyModal, hideUselessInterface, loadVisualizationMapper, mapper, mapperBg, modal, modalBg, setCoordinates, setMapperEvents, setVisualizationId, setVisualizationListEvents, showMapper, showModalBigBox, showVisualizationDefiner, showVisualizationMapper;
     hideUselessInterface = function() {
       return $("#positioning, #visualization .visualization").hide();
     };
@@ -12,17 +12,9 @@
     modalBg = null;
     mapper = null;
     mapperBg = null;
-    destroyModalBigBox = function(callback) {
+    destroyModal = function(modal, modalBg, callback) {
       return modal.fadeOut(function() {
         modal.add(modalBg).remove();
-        if (typeof callback === "function") {
-          return callback();
-        }
-      });
-    };
-    destroyMapper = function(callback) {
-      return mapper.fadeOut(function() {
-        mapper.add(mapperBg).remove();
         if (typeof callback === "function") {
           return callback();
         }
@@ -53,7 +45,7 @@
           if (confirmSelection()) {
             setCoordinates(coordinates);
             setVisualizationId($(visualization).data("id"));
-            return destroyMapper();
+            return destroyModal(mapper, mapperBg);
           }
         }
       });
@@ -69,7 +61,9 @@
         }).hide();
         mapperBg = $("<div/>", {
           id: "tv-modal-bg"
-        }).on("click", destroyMapper);
+        }).on("click", function() {
+          return destroyModal(mapper, mapperBg);
+        });
         $("body").append(mapper).append(mapperBg);
       }
       imageObject = $("<img/>", {
@@ -88,7 +82,7 @@
       return mapper.fadeIn();
     };
     showVisualizationMapper = function(imageJson) {
-      return destroyModalBigBox(function() {
+      return destroyModal(modal, modalBg, function() {
         var image;
         image = JSON.parse(imageJson);
         return showMapper(image);
@@ -119,7 +113,9 @@
         }).hide();
         modalBg = $("<div/>", {
           id: "tv-modal-bg"
-        }).on(CLICK, destroyModalBigBox);
+        }).on(CLICK, function() {
+          return destroyModal(modal, modalBg);
+        });
         $("body").append(modal).append(modalBg);
       }
       modal.html(html);
