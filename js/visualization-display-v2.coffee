@@ -1,10 +1,10 @@
 jQuery(($) ->
   class Visualization
-    modal = null
-    modalBg = null
     ajaxurl = TVAjax.ajaxurl
     PX = "px"
 
+    @modal: null
+    @modalBg: null
     cleanHash = ->
       window.location.hash = ""
 
@@ -28,10 +28,10 @@ jQuery(($) ->
       !oldHash.match(newHashRegex)
 
     destroyContentModal = ->
-      if modal?
-        modal.fadeOut(->
-          modal.hide().empty()
-          modalBg.hide().empty()
+      if @modal?
+        @modal.fadeOut(=>
+          @modal.hide().empty()
+          @modalBg.hide().empty()
         )
 
     scrollToVisualization = (container) ->
@@ -44,17 +44,17 @@ jQuery(($) ->
     showContentModal = (html, callback) ->
       return unless html
 
-      unless modal
-        modal = $("<div/>", {id: "tv-modal"}).hide()
-        modalBg = $("<div/>", {id: "tv-modal-bg"}).on("click", cleanHash)
+      unless @modal
+        @modal = $("<div/>", {id: "tv-modal"}).hide()
+        @modalBg = $("<div/>", {id: "tv-modal-bg"}).on("click", cleanHash)
 
-        $("body").append(modal).append(modalBg)
+        $("body").append(@modal).append(@modalBg)
 
       callback() if typeof callback is "function"
 
       modalPosition = ($(document).scrollTop() + 20) + PX
-      modal.html(html).css("top", modalPosition)
-      modal.add(modalBg).fadeIn()
+      @modal.html(html).css("top", modalPosition)
+      @modal.add(@modalBg).fadeIn()
 
     requestContentModalForTechnologyId = (technologyId, callback) ->
       requestData = {

@@ -4,15 +4,15 @@
   jQuery(function($) {
     var Visualization;
     Visualization = (function() {
-      var PX, ajaxurl, checkHashAndRequestModalIfNeeded, cleanHash, destroyContentModal, modal, modalBg, requestContentModalForTechnologyId, scrollToVisualization, setHashForTechnologySlug, setPosition, setTechnologyModal, showContentModal;
-
-      modal = null;
-
-      modalBg = null;
+      var PX, ajaxurl, checkHashAndRequestModalIfNeeded, cleanHash, destroyContentModal, requestContentModalForTechnologyId, scrollToVisualization, setHashForTechnologySlug, setPosition, setTechnologyModal, showContentModal;
 
       ajaxurl = TVAjax.ajaxurl;
 
       PX = "px";
+
+      Visualization.modal = null;
+
+      Visualization.modalBg = null;
 
       cleanHash = function() {
         return window.location.hash = "";
@@ -40,10 +40,11 @@
       };
 
       destroyContentModal = function() {
-        if (modal != null) {
-          return modal.fadeOut(function() {
-            modal.hide().empty();
-            return modalBg.hide().empty();
+        var _this = this;
+        if (this.modal != null) {
+          return this.modal.fadeOut(function() {
+            _this.modal.hide().empty();
+            return _this.modalBg.hide().empty();
           });
         }
       };
@@ -63,21 +64,21 @@
         if (!html) {
           return;
         }
-        if (!modal) {
-          modal = $("<div/>", {
+        if (!this.modal) {
+          this.modal = $("<div/>", {
             id: "tv-modal"
           }).hide();
-          modalBg = $("<div/>", {
+          this.modalBg = $("<div/>", {
             id: "tv-modal-bg"
           }).on("click", cleanHash);
-          $("body").append(modal).append(modalBg);
+          $("body").append(this.modal).append(this.modalBg);
         }
         if (typeof callback === "function") {
           callback();
         }
         modalPosition = ($(document).scrollTop() + 20) + PX;
-        modal.html(html).css("top", modalPosition);
-        return modal.add(modalBg).fadeIn();
+        this.modal.html(html).css("top", modalPosition);
+        return this.modal.add(this.modalBg).fadeIn();
       };
 
       requestContentModalForTechnologyId = function(technologyId, callback) {
