@@ -62,10 +62,18 @@ module.exports = (grunt) ->
         files: [
           {expand: true, cwd: '/tmp/grunt/js/', src: '*', dest: 'js/', filter: 'isFile'}
         ]
+    concat:
+      options:
+        separator: ';'
+      dist:
+        src: ['libs/jquery.Jcrop.js', '/tmp/grunt/js/visualization-editor.js']
+        dest: '/tmp/grunt/js/visualization-editor.js'
 
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-coffee');
-    grunt.loadNpmTasks('grunt-contrib-copy');
+
+    grunt.loadNpmTasks('grunt-contrib-uglify')
+    grunt.loadNpmTasks('grunt-contrib-coffee')
+    grunt.loadNpmTasks('grunt-contrib-copy')
+    grunt.loadNpmTasks('grunt-contrib-concat')
 
     grunt.registerTask('clean-js', () ->
       dir = 'js'
@@ -80,6 +88,7 @@ module.exports = (grunt) ->
       setupPhp(config.phpFileLocation)
       grunt.task.run(['clean-js','coffee'])
       if __ENV__ is 'dev'
+        grunt.task.run('concat')
         grunt.task.run('copy')
       else if __ENV__ is 'prod'
         grunt.task.run('uglify')
