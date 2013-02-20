@@ -36,7 +36,7 @@ jQuery(($) ->
     visualization = mapper.find("img")
     visualizationData = visualization.data()
 
-    visualization.Jcrop({
+    visualization.Jcrop(
       boxWidth: mapper.width(),
       trueSize: [visualizationData.width, visualizationData.height],
       onSelect: (coordinates) ->
@@ -44,26 +44,25 @@ jQuery(($) ->
           setCoordinates(coordinates)
           setVisualizationId($(visualization).data("id"))
           destroyModal(mapper, mapperBg)
-    })
+    )
 
   showMapper = (image) ->
     return unless image
 
     unless mapper
-      mapper = $(DIV, {id:"tv-mapper"}).hide()
-      mapperBg = $(DIV, {id:"tv-modal-bg"}).on(CLICK, -> destroyModal(mapper, mapperBg))
+      mapper = $(DIV, id:"tv-mapper").hide()
+      mapperBg = $(DIV, id:"tv-modal-bg").on(CLICK, -> destroyModal(mapper, mapperBg))
 
       $("body").append(mapper).append(mapperBg)
 
-    imageObject = $("<img/>", {
+    imageObject = $("<img/>",
       src: image.src,
-      data: {
+      data:
         id: image.id,
         width: image.width,
         height: image.height
-      }
-    })
-    mapperContent = $(DIV, {class:"mapper-wrapper"}).append(imageObject)
+    )
+    mapperContent = $(DIV, class:"mapper-wrapper").append(imageObject)
 
     mapper.append(mapperContent)
     setMapperEvents(mapper)
@@ -76,10 +75,9 @@ jQuery(($) ->
     )
 
   loadVisualizationMapper = (visualizationId) ->
-    requestData = {
+    requestData =
       action: "get_visualization_mapper",
       visualizationId: visualizationId
-    }
     $.post(ajaxurl, requestData, showVisualizationMapper)
 
   setVisualizationListEvents = (modal) ->
@@ -92,8 +90,8 @@ jQuery(($) ->
     return unless html
 
     unless modal
-      modal = $(DIV, {id:"tv-modal"}).hide()
-      modalBg = $(DIV, {id:"tv-modal-bg"}).on(CLICK, -> destroyModal(modal, modalBg))
+      modal = $(DIV, id:"tv-modal").hide()
+      modalBg = $(DIV, id:"tv-modal-bg").on(CLICK, -> destroyModal(modal, modalBg))
 
       $("body").append(modal).append(modalBg)
 
@@ -103,7 +101,7 @@ jQuery(($) ->
 
   showVisualizationDefiner = (ev) ->
     ev.preventDefault()
-    $.post(ajaxurl, {action: "get_visualizations_list"}, showModalBigBox)
+    $.post(ajaxurl, action: "get_visualizations_list", showModalBigBox)
 
   $("#visualization").on(CLICK, ".js-visualization-trigger", showVisualizationDefiner)
 )

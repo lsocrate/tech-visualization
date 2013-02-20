@@ -10,12 +10,11 @@ jQuery(($) ->
 
     setPosition = (area, ratio) ->
       contentData = $(area).data()
-      positioning = {
+      positioning =
         left: (contentData.x1 * ratio) + PX,
         top: (contentData.y1 * ratio) + PX,
         height: (contentData.height * ratio) + PX,
         width: (contentData.width * ratio)+ PX
-      }
       $(area).css(positioning)
 
     setHashForTechnologySlug = (technologySlug) ->
@@ -41,8 +40,8 @@ jQuery(($) ->
       return unless html
 
       unless @modal
-        @modal = $("<div/>", {id: "tv-modal"}).hide()
-        @modalBg = $("<div/>", {id: "tv-modal-bg"}).on("click", cleanHash)
+        @modal = $("<div/>", id: "tv-modal").hide()
+        @modalBg = $("<div/>", id: "tv-modal-bg").on("click", cleanHash)
 
         $("body").append(@modal).append(@modalBg)
 
@@ -53,10 +52,9 @@ jQuery(($) ->
       @modal.add(@modalBg).fadeIn()
 
     requestContentModalForTechnologyId = (technologyId, callback) ->
-      requestData = {
+      requestData =
         action: "get_visualization_content",
         contentId: technologyId
-      }
 
       $.post(ajaxurl, requestData, (html) -> showContentModal(html, callback))
 
