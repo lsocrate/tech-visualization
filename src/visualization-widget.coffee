@@ -1,123 +1,150 @@
-(function(){
-  var jQuery
-  var $
-  var ajaxurl = "http://tech.dev/wp-admin/admin-ajax.php?callback=?"
-  var container
-  var modal
-  var modalBg
+###
+# CONFIGURATION
+###
+widgetAjaxUrl = "http://tech.dev/wp-admin/admin-ajax.php?callback=?"
 
-  if (typeof window.jQuery == "undefined") {
-    var scriptTag = document.createElement("script")
-    scriptTag.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
+###
+# COPY VISUALIZATION CLASS FROM visualization-display.js
+###
+class Visualization
+  ajaxurl = null
+  PX = "px"
 
-    if (scriptTag.readyState) {
-      scriptTag.onreadystatechange = function () {
-        if (this.readyState == "complete" || this.readyState == "loaded") {
-          tv_scriptLoadHandler()
-        }
-      }
-    } else {
-      scriptTag.onload = tv_scriptLoadHandler
-    }
+  @modal: null
+  @modalBg: null
+  cleanHash = ->
+    window.location.hash = ""
 
-    (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(scriptTag)
-  } else {
-    jQuery = window.jQuery
-    $ = jQuery
-    main()
-  }
+  setPosition = (area, ratio) ->
+    contentData = $(area).data()
+    positioning =
+      left: (contentData.x1 * ratio) + PX,
+      top: (contentData.y1 * ratio) + PX,
+      height: (contentData.height * ratio) + PX,
+      width: (contentData.width * ratio)+ PX
+    $(area).css(positioning)
 
-  function tv_scriptLoadHandler() {
-    jQuery = window.jQuery.noConflict(true)
-    $ = jQuery
-    main()
-  }
+  setHashForTechnologySlug = (technologySlug) ->
+    oldHash = window.location.hash
+    newHash = "technology-" + technologySlug
 
-  function main() {
-    jQuery(document).ready(function($) {
-      container = $("#envisioning-technology-visualization")
+    window.location.hash = newHash
 
-      var requestData = {
-        action: "get_visualization",
-        visualizationId: container.data("visualizationId")
-      }
+    newHashRegex = new RegExp("^#?" + newHash + "$")
+    !oldHash.match(newHashRegex)
+
+  destroyContentModal = ->
+    @modal.fadeOut( => @modal.add(@modalBg).hide().empty()) if @modal?
+
+  scrollToVisualization = (container) ->
+    scrollPosition = $(document).scrollTop()
+    visualizationTop = $(container).offset().top
+    visualizationBottom = visualizationTop + $(container).height()
+
+    $(document).scrollTop(visualizationTop) if scrollPosition < visualizationTop or scrollPosition > visualizationBottom
+
+  showContentModal = (html, callback) ->
+    return unless html
+
+    unless @modal
+      @modal = $("<div/>", id: "tv-modal").hide()
+      @modalBg = $("<div/>", id: "tv-modal-bg").on("click", cleanHash)
+
+      $("body").append(@modal).append(@modalBg)
+
+    callback() if typeof callback is "function"
+
+    modalPosition = ($(document).scrollTop() + 20) + PX
+    @modal.html(html).css("top", modalPosition)
+    @modal.add(@modalBg).fadeIn()
+
+  requestContentModalForTechnologyId = (technologyId, callback) ->
+    requestData =
+      action: "get_visualization_content",
+      contentId: technologyId
+
+    if @isWidget
       $.getJSON(ajaxurl, requestData)
-    })
-  }
+    else
+      $.post(ajaxurl, requestData, (html) -> showContentModal(html, callback))
 
-  var visualization = function (container) {
-    var image = $("img", container)
-    var imageWidth = $(image).width()
-    var originalWidth = $(image).data("originalWidth")
-    var visualizationRatio =  imageWidth / originalWidth
-    var contents = $(".tv-map", container)
+  checkHashAndRequestModalIfNeeded = (visualization, ev) ->
+    hash = window.location.hash
+    return destroyContentModal() if !hash or hash is "#"
 
-    var setPosition = function () {
-      var contentData = $(this).data()
-      var positioning = {
-        left: (contentData.x1 * visualizationRatio) + "px",
-        top: (contentData.y1 * visualizationRatio) + "px",
-        height: (contentData.height * visualizationRatio) + "px",
-        width: (contentData.width * visualizationRatio)+ "px"
-      }
-      $(this).css(positioning)
-    }
+    matches = hash.match(/#technology\-(.*)$/)
+    technologySlug = matches?[1]
+    if technologySlug
+      technology = $(visualization.contents).filter("[data-slug=" + technologySlug + "]")
+      if technology
+        callback = scrollToVisualization(visualization.container) unless ev
+        requestContentModalForTechnologyId(technology.data("id"), callback)
 
-    var destroyContentModal = function () {
-      modal.fadeOut(function(){
-        modal.hide().empty()
-        modalBg.hide().empty()
-      })
-    }
+  setTechnologyHashSlug = (ev) ->
+    ev.preventDefault()
 
-    window.showContentModal = function (html) {
-      if (!html) return
+    technologySlug = $(@).data("slug")
+    setHashForTechnologySlug(technologySlug) if technologySlug
 
-      if (!modal) {
-        modal = $("<div/>", {id:"tv-modal"}).hide()
-        modalBg = $("<div/>", {id:"tv-modal-bg"}).on("click", destroyContentModal)
+  constructor: (@container, ajaxTargetUrl, @isWidget = false) ->
+    ajaxurl = ajaxTargetUrl
+    @contents = $(".tv-map", @container)
+    image = $("img", @container)
+    visualizationRatio = image.width() / image.data("originalWidth")
 
-        $("body").append(modal).append(modalBg)
-      }
+    @contents.each( -> setPosition(@, visualizationRatio))
+    @container.on("click", ".tv-map", setTechnologyHashSlug)
 
-      modal.html(html)
-      modal.fadeIn()
-      modalBg.fadeIn()
-    }
+    window.showContentModal = @showContentModal
 
-    var requestContentModal = function (ev) {
-      ev.preventDefault()
+    window.onhashchange = (ev) => checkHashAndRequestModalIfNeeded(@, ev)
+    checkHashAndRequestModalIfNeeded(@)
 
-      var data = $(this).data()
+###
+# BACK TO BUSINESS
+###
+container
 
-      var requestData = {
-        action: "get_visualization_content",
-        contentId: data.id
-      }
+window.tech_visualization = (data) ->
+  $ = jQuery
 
-      $.getJSON(ajaxurl, requestData)
-    }
+  for cssHref in data.css
+    css = $("<link>",
+      rel: "stylesheet"
+      href: cssHref
+    )
+    css.appendTo("head")
 
-    $(contents).each(setPosition)
-    $(container).on("click", ".tv-map", requestContentModal)
-  }
+  container.html(data.html)
+  $(".tv-visualization").each(-> new Visualization($(@), widgetAjaxUrl, true))
 
-  window.tech_visualization = function (data) {
-    var $ = jQuery
+main = ->
+  jQuery(($) ->
+    container = $("#envisioning-technology-visualization")
+    requestData =
+      action: "get_visualization"
+      visualizationId: container.data("visualizationId")
+    $.getJSON(widgetAjaxUrl, requestData)
+  )
 
-    for (var i = data.css.length - 1; i >= 0; i--) {
-      var cssHref = data.css[i]
-      var css = $("<link>", {
-        rel: "stylesheet",
-        href: cssHref
-      })
-      css.appendTo("head")
-    };
+tv_scriptLoadHandler = ->
+  jQuery = window.jQuery.noConflict(true)
+  $ = jQuery
+  main()
 
-    container.html(data.html)
+if typeof window.jQuery is "undefined"
+  scriptTag = document.createElement("script")
+  scriptTag.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
 
-    $(".tv-visualization").each(function(){
-      new visualization($(this))
-    })
-  }
-})()
+  if scriptTag.readyState
+    scriptTag.onreadystatechange = ->
+      if this.readyState is "complete" or this.readyState is "loaded"
+        tv_scriptLoadHandler()
+  else
+    scriptTag.onload = tv_scriptLoadHandler
+
+  (document.getElementsByTagName("head")[0] or document.documentElement).appendChild(scriptTag)
+else
+  jQuery = window.jQuery
+  $ = jQuery
+  main()

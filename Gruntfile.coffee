@@ -46,7 +46,7 @@ module.exports = (grunt) ->
         files:
           '/tmp/grunt/js/visualization-display.js': 'src/visualization-display.coffee'
           '/tmp/grunt/js/visualization-editor.js': 'src/visualization-editor.coffee'
-          # '/tmp/grunt/js/visualization-widget.js': 'src/visualization-widget.coffee'
+          '/tmp/grunt/js/visualization-widget.js': 'src/visualization-widget.coffee'
     uglify:
       display:
         src: '/tmp/grunt/js/visualization-display.js'
@@ -54,9 +54,9 @@ module.exports = (grunt) ->
       editor:
         src: ['libs/jquery.Jcrop.js', '/tmp/grunt/js/visualization-editor.js']
         dest: 'js/visualization-editor.min.js'
-      # widget:
-      #   src: '/tmp/grunt/js/visualization-widget.js'
-      #   dest: 'js/visualization-widget.min.js'
+      widget:
+        src: '/tmp/grunt/js/visualization-widget.js'
+        dest: 'js/visualization-widget.min.js'
     copy:
       main:
         files: [

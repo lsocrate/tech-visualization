@@ -1,6 +1,6 @@
 jQuery(($) ->
   class Visualization
-    ajaxurl = TVAjax.ajaxurl
+    ajaxurl = null
     PX = "px"
 
     @modal: null
@@ -56,7 +56,10 @@ jQuery(($) ->
         action: "get_visualization_content",
         contentId: technologyId
 
-      $.post(ajaxurl, requestData, (html) -> showContentModal(html, callback))
+      if @isWidget
+        $.getJSON(ajaxurl, requestData)
+      else
+        $.post(ajaxurl, requestData, (html) -> showContentModal(html, callback))
 
     checkHashAndRequestModalIfNeeded = (visualization, ev) ->
       hash = window.location.hash
@@ -70,25 +73,25 @@ jQuery(($) ->
           callback = scrollToVisualization(visualization.container) unless ev
           requestContentModalForTechnologyId(technology.data("id"), callback)
 
-    setTechnologyModal = (ev) ->
+    setTechnologyHashSlug = (ev) ->
       ev.preventDefault()
 
-      technologyId = $(@).data("id")
       technologySlug = $(@).data("slug")
+      setHashForTechnologySlug(technologySlug) if technologySlug
 
-      if technologyId and not setHashForTechnologySlug(technologySlug)
-        requestContentModalForTechnologyId(technologyId)
-
-    constructor: (@container) ->
+    constructor: (@container, ajaxTargetUrl, @isWidget = false) ->
+      ajaxurl = ajaxTargetUrl
       @contents = $(".tv-map", @container)
       image = $("img", @container)
       visualizationRatio = image.width() / image.data("originalWidth")
 
       @contents.each( -> setPosition(@, visualizationRatio))
-      @container.on("click", ".tv-map", setTechnologyModal)
+      @container.on("click", ".tv-map", setTechnologyHashSlug)
+
+      window.showContentModal = @showContentModal
 
       window.onhashchange = (ev) => checkHashAndRequestModalIfNeeded(@, ev)
       checkHashAndRequestModalIfNeeded(@)
 
-  $(".tv-visualization").each( -> new Visualization($(@)))
+  $(".tv-visualization").each( -> new Visualization($(@), TVAjax.ajaxurl))
 )

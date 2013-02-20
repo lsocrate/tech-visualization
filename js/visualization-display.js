@@ -3,9 +3,9 @@
   jQuery(function($) {
     var Visualization;
     Visualization = (function() {
-      var PX, ajaxurl, checkHashAndRequestModalIfNeeded, cleanHash, destroyContentModal, requestContentModalForTechnologyId, scrollToVisualization, setHashForTechnologySlug, setPosition, setTechnologyModal, showContentModal;
+      var PX, ajaxurl, checkHashAndRequestModalIfNeeded, cleanHash, destroyContentModal, requestContentModalForTechnologyId, scrollToVisualization, setHashForTechnologySlug, setPosition, setTechnologyHashSlug, showContentModal;
 
-      ajaxurl = TVAjax.ajaxurl;
+      ajaxurl = null;
 
       PX = "px";
 
@@ -85,9 +85,13 @@
           action: "get_visualization_content",
           contentId: technologyId
         };
-        return $.post(ajaxurl, requestData, function(html) {
-          return showContentModal(html, callback);
-        });
+        if (this.isWidget) {
+          return $.getJSON(ajaxurl, requestData);
+        } else {
+          return $.post(ajaxurl, requestData, function(html) {
+            return showContentModal(html, callback);
+          });
+        }
       };
 
       checkHashAndRequestModalIfNeeded = function(visualization, ev) {
@@ -109,27 +113,29 @@
         }
       };
 
-      setTechnologyModal = function(ev) {
-        var technologyId, technologySlug;
+      setTechnologyHashSlug = function(ev) {
+        var technologySlug;
         ev.preventDefault();
-        technologyId = $(this).data("id");
         technologySlug = $(this).data("slug");
-        if (technologyId && !setHashForTechnologySlug(technologySlug)) {
-          return requestContentModalForTechnologyId(technologyId);
+        if (technologySlug) {
+          return setHashForTechnologySlug(technologySlug);
         }
       };
 
-      function Visualization(container) {
+      function Visualization(container, ajaxTargetUrl, isWidget) {
         var image, visualizationRatio,
           _this = this;
         this.container = container;
+        this.isWidget = isWidget != null ? isWidget : false;
+        ajaxurl = ajaxTargetUrl;
         this.contents = $(".tv-map", this.container);
         image = $("img", this.container);
         visualizationRatio = image.width() / image.data("originalWidth");
         this.contents.each(function() {
           return setPosition(this, visualizationRatio);
         });
-        this.container.on("click", ".tv-map", setTechnologyModal);
+        this.container.on("click", ".tv-map", setTechnologyHashSlug);
+        window.showContentModal = this.showContentModal;
         window.onhashchange = function(ev) {
           return checkHashAndRequestModalIfNeeded(_this, ev);
         };
@@ -140,7 +146,7 @@
 
     })();
     return $(".tv-visualization").each(function() {
-      return new Visualization($(this));
+      return new Visualization($(this), TVAjax.ajaxurl);
     });
   });
 
