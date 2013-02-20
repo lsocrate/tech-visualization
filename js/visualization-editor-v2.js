@@ -2,12 +2,13 @@
 (function() {
 
   jQuery(function($) {
-    var CLICK, confirmSelection, destroyModal, hideUselessInterface, loadVisualizationMapper, mapper, mapperBg, modal, modalBg, setCoordinates, setMapperEvents, setVisualizationId, setVisualizationListEvents, showMapper, showModalBigBox, showVisualizationDefiner, showVisualizationMapper;
+    var CLICK, DIV, confirmSelection, destroyModal, hideUselessInterface, loadVisualizationMapper, mapper, mapperBg, modal, modalBg, setCoordinates, setMapperEvents, setVisualizationId, setVisualizationListEvents, showMapper, showModalBigBox, showVisualizationDefiner, showVisualizationMapper;
     hideUselessInterface = function() {
       return $("#positioning, #visualization .visualization").hide();
     };
     hideUselessInterface();
     CLICK = "click";
+    DIV = "<div/>";
     modal = null;
     modalBg = null;
     mapper = null;
@@ -56,12 +57,12 @@
         return;
       }
       if (!mapper) {
-        mapper = $("<div/>", {
+        mapper = $(DIV, {
           id: "tv-mapper"
         }).hide();
-        mapperBg = $("<div/>", {
+        mapperBg = $(DIV, {
           id: "tv-modal-bg"
-        }).on("click", function() {
+        }).on(CLICK, function() {
           return destroyModal(mapper, mapperBg);
         });
         $("body").append(mapper).append(mapperBg);
@@ -74,7 +75,7 @@
           height: image.height
         }
       });
-      mapperContent = $("<div/>", {
+      mapperContent = $(DIV, {
         "class": "mapper-wrapper"
       }).append(imageObject);
       mapper.append(mapperContent);
@@ -108,10 +109,10 @@
         return;
       }
       if (!modal) {
-        modal = $("<div/>", {
+        modal = $(DIV, {
           id: "tv-modal"
         }).hide();
-        modalBg = $("<div/>", {
+        modalBg = $(DIV, {
           id: "tv-modal-bg"
         }).on(CLICK, function() {
           return destroyModal(modal, modalBg);

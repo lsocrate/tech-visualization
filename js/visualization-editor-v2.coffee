@@ -6,6 +6,7 @@ jQuery(($) ->
 
   # UI
   CLICK = "click"
+  DIV = "<div/>"
   modal = null
   modalBg = null
   mapper = null
@@ -49,8 +50,8 @@ jQuery(($) ->
     return unless image
 
     unless mapper
-      mapper = $("<div/>", {id:"tv-mapper"}).hide()
-      mapperBg = $("<div/>", {id:"tv-modal-bg"}).on("click", -> destroyModal(mapper, mapperBg))
+      mapper = $(DIV, {id:"tv-mapper"}).hide()
+      mapperBg = $(DIV, {id:"tv-modal-bg"}).on(CLICK, -> destroyModal(mapper, mapperBg))
 
       $("body").append(mapper).append(mapperBg)
 
@@ -62,7 +63,7 @@ jQuery(($) ->
         height: image.height
       }
     })
-    mapperContent = $("<div/>", {class:"mapper-wrapper"}).append(imageObject)
+    mapperContent = $(DIV, {class:"mapper-wrapper"}).append(imageObject)
 
     mapper.append(mapperContent)
     setMapperEvents(mapper)
@@ -91,8 +92,8 @@ jQuery(($) ->
     return unless html
 
     unless modal
-      modal = $("<div/>", {id:"tv-modal"}).hide()
-      modalBg = $("<div/>", {id:"tv-modal-bg"}).on(CLICK, -> destroyModal(modal, modalBg))
+      modal = $(DIV, {id:"tv-modal"}).hide()
+      modalBg = $(DIV, {id:"tv-modal-bg"}).on(CLICK, -> destroyModal(modal, modalBg))
 
       $("body").append(modal).append(modalBg)
 
