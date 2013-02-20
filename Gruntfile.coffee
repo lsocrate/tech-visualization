@@ -5,19 +5,19 @@ module.exports = (grunt) ->
     coffee:
       compile:
         files:
-          'js/visualization-display.js': 'src/visualization-display.coffee'
-          'js/visualization-editor.js': 'src/visualization-editor.coffee'
-          'js/visualization-widget.js': 'src/visualization-widget.coffee'
+          '/tmp/grunt/js/visualization-display.js': 'src/visualization-display.coffee'
+          '/tmp/grunt/js/visualization-editor.js': 'src/visualization-editor.coffee'
+          # '/tmp/grunt/js/visualization-widget.js': 'src/visualization-widget.coffee'
     uglify:
       display:
-        src: 'js/visualization-display.js'
-        dest: 'build/visualization-display.min.js'
+        src: '/tmp/grunt/js/visualization-display.js'
+        dest: 'js/visualization-display.min.js'
       editor:
-        src: ['libs/jquery.Jcrop.js', 'js/visualization-editor.js']
-        dest: 'build/visualization-editor.min.js'
-      widget:
-        src: 'js/visualization-widget.js'
-        dest: 'build/visualization-widget.min.js'
+        src: ['libs/jquery.Jcrop.js', '/tmp/grunt/js/visualization-editor.js']
+        dest: 'js/visualization-editor.min.js'
+      # widget:
+      #   src: '/tmp/grunt/js/visualization-widget.js'
+      #   dest: 'js/visualization-widget.min.js'
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-coffee');
