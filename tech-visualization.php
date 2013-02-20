@@ -27,11 +27,10 @@ class TechVisualizations {
     const VISUALIZATION_META_VALUE = "visualization";
     const COORDINATES_META_KEY = "tv-coordinates";
     const CSS_DISPLAY = "tech-visualization/css/visualization-display.css";
-    const JS_DISPLAY = "tech-visualization/js/visualization-display.js";
+    const JS_DISPLAY = "tech-visualization/js/visualization-display.min.js";
     const CSS_EDITOR = "tech-visualization/css/visualization-editor.css";
-    const JS_EDITOR = "tech-visualization/js/visualization-editor.js";
+    const JS_EDITOR = "tech-visualization/js/visualization-editor.min.js";
     const CSS_JCROP = "tech-visualization/css/jquery.Jcrop.min.css";
-    const JS_JCROP = "tech-visualization/js/jquery.Jcrop.min.js";
 
     private $visualizationDisplayRegex = '/\[tech-visualization[^\]]*id="(\d*)"[^\]]*\]/s';
     private $db;
@@ -268,7 +267,6 @@ class TechVisualizations {
     public function showVisualizationBox() {
         wp_enqueue_script("visualization-editor", plugins_url(self::JS_EDITOR), "jquery", false, true);
         wp_enqueue_style("visualization-editor", plugins_url(self::CSS_EDITOR));
-        wp_enqueue_script("jcrop", plugins_url(self::JS_JCROP), "jquery", false, true);
         wp_enqueue_style("jcrop", plugins_url(self::CSS_JCROP));
 
         $postId = get_the_ID();
