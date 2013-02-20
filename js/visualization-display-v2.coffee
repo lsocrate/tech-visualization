@@ -1,46 +1,47 @@
 jQuery(($) ->
-  modal = null
-  modalBg = null
-  ajaxurl = TVAjax.ajaxurl
-
-  cleanHash = ->
-    window.location.hash = ""
-
-  setPosition = (area, ratio) ->
-    contentData = $(area).data()
-    positioning = {
-      left: (contentData.x1 * ratio) + "px",
-      top: (contentData.y1 * ratio) + "px",
-      height: (contentData.height * ratio) + "px",
-      width: (contentData.width * ratio)+ "px"
-    }
-    $(area).css(positioning)
-
-  setHashForTechnologySlug = (technologySlug) ->
-    oldHash = window.location.hash
-    newHash = "technology-" + technologySlug
-
-    window.location.hash = newHash
-
-    newHashRegex = new RegExp("^#?" + newHash + "$")
-    !oldHash.match(newHashRegex)
-
   class Visualization
-    destroyContentModal: ->
+    modal = null
+    modalBg = null
+    ajaxurl = TVAjax.ajaxurl
+    PX = "px"
+
+    cleanHash = ->
+      window.location.hash = ""
+
+    setPosition = (area, ratio) ->
+      contentData = $(area).data()
+      positioning = {
+        left: (contentData.x1 * ratio) + PX,
+        top: (contentData.y1 * ratio) + PX,
+        height: (contentData.height * ratio) + PX,
+        width: (contentData.width * ratio)+ PX
+      }
+      $(area).css(positioning)
+
+    setHashForTechnologySlug = (technologySlug) ->
+      oldHash = window.location.hash
+      newHash = "technology-" + technologySlug
+
+      window.location.hash = newHash
+
+      newHashRegex = new RegExp("^#?" + newHash + "$")
+      !oldHash.match(newHashRegex)
+
+    destroyContentModal = ->
       if modal?
         modal.fadeOut(->
           modal.hide().empty()
           modalBg.hide().empty()
         )
 
-    scrollToVisualization: (container) ->
+    scrollToVisualization = (container) ->
       scrollPosition = $(document).scrollTop()
       visualizationTop = $(container).offset().top
       visualizationBottom = visualizationTop + $(container).height()
 
       $(document).scrollTop(visualizationTop) if scrollPosition < visualizationTop or scrollPosition > visualizationBottom
 
-    showContentModal: (html, callback) ->
+    showContentModal = (html, callback) ->
       return unless html
 
       unless modal
@@ -51,52 +52,49 @@ jQuery(($) ->
 
       callback() if typeof callback is "function"
 
-      modalPosition = ($(document).scrollTop() + 20) + "px"
+      modalPosition = ($(document).scrollTop() + 20) + PX
       modal.html(html).css("top", modalPosition)
       modal.add(modalBg).fadeIn()
 
-    requestContentModalForTechnologyId: (technologyId, callback) ->
+    requestContentModalForTechnologyId = (technologyId, callback) ->
       requestData = {
         action: "get_visualization_content",
         contentId: technologyId
       }
 
-      $.post(ajaxurl, requestData, (html) =>
-        @showContentModal(html, callback)
-      )
+      $.post(ajaxurl, requestData, (html) -> showContentModal(html, callback))
 
-    checkHashAndRequestModalIfNeeded: (ev) ->
+    checkHashAndRequestModalIfNeeded = (visualization, ev) ->
       hash = window.location.hash
-      return @destroyContentModal() if !hash or hash is "#"
+      return destroyContentModal() if !hash or hash is "#"
 
       matches = hash.match(/#technology\-(.*)$/)
       technologySlug = matches?[1]
       if technologySlug
-        technology = $(@contents).filter("[data-slug=" + technologySlug + "]")
+        technology = $(visualization.contents).filter("[data-slug=" + technologySlug + "]")
         if technology
-          callback = @scrollToVisualization(@container) unless ev
-          @requestContentModalForTechnologyId(technology.data("id"), callback)
+          callback = scrollToVisualization(visualization.container) unless ev
+          requestContentModalForTechnologyId(technology.data("id"), callback)
 
-    setTechnologyModal: (ev) ->
+    setTechnologyModal = (ev) ->
       ev.preventDefault()
 
       technologyId = $(@).data("id")
       technologySlug = $(@).data("slug")
 
-      return unless technologyId
-      @requestContentModalForTechnologyId(technologyId) unless setHashForTechnologySlug(technologySlug)
+      if technologyId and not setHashForTechnologySlug(technologySlug)
+        requestContentModalForTechnologyId(technologyId)
 
     constructor: (@container) ->
       @contents = $(".tv-map", @container)
-      @image = $("img", @container)
-      visualizationRatio = @image.width() / @image.data("originalWidth")
+      image = $("img", @container)
+      visualizationRatio = image.width() / image.data("originalWidth")
 
       @contents.each( -> setPosition(@, visualizationRatio))
-      @container.on("click", ".tv-map", @setTechnologyModal)
+      @container.on("click", ".tv-map", setTechnologyModal)
 
-      window.onhashchange = (ev) => @checkHashAndRequestModalIfNeeded(ev)
-      @checkHashAndRequestModalIfNeeded()
+      window.onhashchange = (ev) => checkHashAndRequestModalIfNeeded(@, ev)
+      checkHashAndRequestModalIfNeeded(@)
 
-  visualizations = []
-  $(".tv-visualization").each( -> visualizations.push(new Visualization($(@))))
+  $(".tv-visualization").each( -> new Visualization($(@)))
 )

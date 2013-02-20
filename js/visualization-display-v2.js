@@ -2,35 +2,44 @@
 (function() {
 
   jQuery(function($) {
-    var Visualization, ajaxurl, cleanHash, modal, modalBg, setHashForTechnologySlug, setPosition, visualizations;
-    modal = null;
-    modalBg = null;
-    ajaxurl = TVAjax.ajaxurl;
-    cleanHash = function() {
-      return window.location.hash = "";
-    };
-    setPosition = function(area, ratio) {
-      var contentData, positioning;
-      contentData = $(area).data();
-      positioning = {
-        left: (contentData.x1 * ratio) + "px",
-        top: (contentData.y1 * ratio) + "px",
-        height: (contentData.height * ratio) + "px",
-        width: (contentData.width * ratio) + "px"
-      };
-      return $(area).css(positioning);
-    };
-    setHashForTechnologySlug = function(technologySlug) {
-      var newHash, newHashRegex, oldHash;
-      oldHash = window.location.hash;
-      newHash = "technology-" + technologySlug;
-      window.location.hash = newHash;
-      newHashRegex = new RegExp("^#?" + newHash + "$");
-      return !oldHash.match(newHashRegex);
-    };
+    var Visualization;
     Visualization = (function() {
+      var PX, ajaxurl, checkHashAndRequestModalIfNeeded, cleanHash, destroyContentModal, modal, modalBg, requestContentModalForTechnologyId, scrollToVisualization, setHashForTechnologySlug, setPosition, setTechnologyModal, showContentModal;
 
-      Visualization.prototype.destroyContentModal = function() {
+      modal = null;
+
+      modalBg = null;
+
+      ajaxurl = TVAjax.ajaxurl;
+
+      PX = "px";
+
+      cleanHash = function() {
+        return window.location.hash = "";
+      };
+
+      setPosition = function(area, ratio) {
+        var contentData, positioning;
+        contentData = $(area).data();
+        positioning = {
+          left: (contentData.x1 * ratio) + PX,
+          top: (contentData.y1 * ratio) + PX,
+          height: (contentData.height * ratio) + PX,
+          width: (contentData.width * ratio) + PX
+        };
+        return $(area).css(positioning);
+      };
+
+      setHashForTechnologySlug = function(technologySlug) {
+        var newHash, newHashRegex, oldHash;
+        oldHash = window.location.hash;
+        newHash = "technology-" + technologySlug;
+        window.location.hash = newHash;
+        newHashRegex = new RegExp("^#?" + newHash + "$");
+        return !oldHash.match(newHashRegex);
+      };
+
+      destroyContentModal = function() {
         if (modal != null) {
           return modal.fadeOut(function() {
             modal.hide().empty();
@@ -39,7 +48,7 @@
         }
       };
 
-      Visualization.prototype.scrollToVisualization = function(container) {
+      scrollToVisualization = function(container) {
         var scrollPosition, visualizationBottom, visualizationTop;
         scrollPosition = $(document).scrollTop();
         visualizationTop = $(container).offset().top;
@@ -49,7 +58,7 @@
         }
       };
 
-      Visualization.prototype.showContentModal = function(html, callback) {
+      showContentModal = function(html, callback) {
         var modalPosition;
         if (!html) {
           return;
@@ -66,78 +75,73 @@
         if (typeof callback === "function") {
           callback();
         }
-        modalPosition = ($(document).scrollTop() + 20) + "px";
+        modalPosition = ($(document).scrollTop() + 20) + PX;
         modal.html(html).css("top", modalPosition);
         return modal.add(modalBg).fadeIn();
       };
 
-      Visualization.prototype.requestContentModalForTechnologyId = function(technologyId, callback) {
-        var requestData,
-          _this = this;
+      requestContentModalForTechnologyId = function(technologyId, callback) {
+        var requestData;
         requestData = {
           action: "get_visualization_content",
           contentId: technologyId
         };
         return $.post(ajaxurl, requestData, function(html) {
-          return _this.showContentModal(html, callback);
+          return showContentModal(html, callback);
         });
       };
 
-      Visualization.prototype.checkHashAndRequestModalIfNeeded = function(ev) {
+      checkHashAndRequestModalIfNeeded = function(visualization, ev) {
         var callback, hash, matches, technology, technologySlug;
         hash = window.location.hash;
         if (!hash || hash === "#") {
-          return this.destroyContentModal();
+          return destroyContentModal();
         }
         matches = hash.match(/#technology\-(.*)$/);
         technologySlug = matches != null ? matches[1] : void 0;
         if (technologySlug) {
-          technology = $(this.contents).filter("[data-slug=" + technologySlug + "]");
+          technology = $(visualization.contents).filter("[data-slug=" + technologySlug + "]");
           if (technology) {
             if (!ev) {
-              callback = this.scrollToVisualization(this.container);
+              callback = scrollToVisualization(visualization.container);
             }
-            return this.requestContentModalForTechnologyId(technology.data("id"), callback);
+            return requestContentModalForTechnologyId(technology.data("id"), callback);
           }
         }
       };
 
-      Visualization.prototype.setTechnologyModal = function(ev) {
+      setTechnologyModal = function(ev) {
         var technologyId, technologySlug;
         ev.preventDefault();
         technologyId = $(this).data("id");
         technologySlug = $(this).data("slug");
-        if (!technologyId) {
-          return;
-        }
-        if (!setHashForTechnologySlug(technologySlug)) {
-          return this.requestContentModalForTechnologyId(technologyId);
+        if (technologyId && !setHashForTechnologySlug(technologySlug)) {
+          return requestContentModalForTechnologyId(technologyId);
         }
       };
 
       function Visualization(container) {
-        var visualizationRatio,
+        var image, visualizationRatio,
           _this = this;
         this.container = container;
         this.contents = $(".tv-map", this.container);
-        this.image = $("img", this.container);
-        visualizationRatio = this.image.width() / this.image.data("originalWidth");
+        image = $("img", this.container);
+        visualizationRatio = image.width() / image.data("originalWidth");
         this.contents.each(function() {
           return setPosition(this, visualizationRatio);
         });
-        this.container.on("click", ".tv-map", this.setTechnologyModal);
+        this.container.on("click", ".tv-map", setTechnologyModal);
         window.onhashchange = function(ev) {
-          return _this.checkHashAndRequestModalIfNeeded(ev);
+          return checkHashAndRequestModalIfNeeded(_this, ev);
         };
-        this.checkHashAndRequestModalIfNeeded();
+        checkHashAndRequestModalIfNeeded(this);
       }
 
       return Visualization;
 
     })();
-    visualizations = [];
     return $(".tv-visualization").each(function() {
-      return visualizations.push(new Visualization($(this)));
+      return new Visualization($(this));
     });
   });
 
