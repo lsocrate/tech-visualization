@@ -23,6 +23,8 @@ jQuery(function($){
     }
 
     var destroyContentModal = function () {
+      if (!modal) return
+
       modal.fadeOut(function(){
         modal.hide().empty()
         modalBg.hide().empty()
