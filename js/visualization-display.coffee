@@ -28,7 +28,7 @@ jQuery(($) ->
       !oldHash.match(newHashRegex)
 
     destroyContentModal = ->
-      if @modal? @modal.fadeOut( => @modal.add(@modalBg).hide().empty())
+      @modal.fadeOut( => @modal.add(@modalBg).hide().empty()) if @modal?
 
     scrollToVisualization = (container) ->
       scrollPosition = $(document).scrollTop()
