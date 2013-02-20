@@ -1,7 +1,28 @@
 module.exports = (grunt) ->
+  __ENV__ = null
+  setContantToCorrectJsForEnvironment = (line, boilerplate, file, location) ->
+    switch __ENV__
+      when 'dev'
+        if /\.min\.js$/.test(location)
+          location = location.replace(/\.js$/, '.min.js')
+      when 'prod'
+        unless /\.min\.js$/.test(location)
+          location = location.replace(/\.min\.js$/, '.js')
+
+    boilerplate + file + ' = "' + location + '";'
+
+  fs = require('fs')
+  setupPhp = (file) ->
+    php = fs.readFileSync(file).toString()
+    php = php.replace(/(\s*const )(JS_DISPLAY)[^;]*"([^;]*)";/, setContantToCorrectJsForEnvironment, 'm')
+    php = php.replace(/(\s*const )(JS_EDITOR)[^;]*"([^;]*)";/, setContantToCorrectJsForEnvironment, 'm')
+    fs.writeFileSync(file, php)
+
   # Config
   grunt.initConfig(
     pkg: grunt.file.readJSON('package.json')
+    go:
+      phpFileLocation: 'tech-visualization.php'
     coffee:
       compile:
         files:
@@ -24,4 +45,9 @@ module.exports = (grunt) ->
 
     # Default task(s).
     grunt.registerTask('default', ['coffee', 'uglify']);
+    grunt.registerTask('go', 'Switch environments', (env) ->
+      __ENV__ = env
+      config = grunt.config.data.go
+      setupPhp(config.phpFileLocation)
+    )
   )
