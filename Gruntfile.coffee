@@ -10,10 +10,10 @@ module.exports = (grunt) ->
     switch __ENV__
       when 'dev'
         if /\.min\.js$/.test(location)
-          location = location.replace(/\.js$/, '.min.js')
+          location = location.replace(/\.min\.js$/, '.js')
       when 'prod'
         unless /\.min\.js$/.test(location)
-          location = location.replace(/\.min\.js$/, '.js')
+          location = location.replace(/\.js$/, '.min.js')
 
     boilerplate + file + ' = "' + location + '";'
 
@@ -68,7 +68,6 @@ module.exports = (grunt) ->
       dist:
         src: ['libs/jquery.Jcrop.js', '/tmp/grunt/js/visualization-editor.js']
         dest: '/tmp/grunt/js/visualization-editor.js'
-
 
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-coffee')
