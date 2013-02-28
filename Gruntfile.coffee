@@ -61,13 +61,21 @@ module.exports = (grunt) ->
         options:
           interrupt: true
     clean: ["js"]
+    compress:
+      package:
+        options:
+          archive: 'builds/tech-visualization-<%= pkg.version %>.zip'
+        files: [
+          {src:['*.php', '*.md', 'css/**', 'js/**', 'libs/**']}
+        ]
 
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-coffee')
     grunt.loadNpmTasks('grunt-contrib-copy')
     grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-watch')
-    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-clean')
+    grunt.loadNpmTasks('grunt-contrib-compress')
 
     grunt.registerTask('go', 'Switch environments', (env) ->
       __ENV__ = env
@@ -80,5 +88,9 @@ module.exports = (grunt) ->
         grunt.task.run('watch')
       else if __ENV__ is 'prod'
         grunt.task.run('uglify')
+    )
+
+    grunt.registerTask('package', 'Make deployment package', ->
+      grunt.task.run(['go:prod', 'compress:package'])
     )
   )
