@@ -1,7 +1,6 @@
 module.exports = (grunt) ->
   # MODULES
   fs = require('fs')
-  path = require("path")
 
   # ENVIRONMENT
   __ENV__ = null
@@ -22,19 +21,6 @@ module.exports = (grunt) ->
     php = php.replace(/(\s*const )(JS_DISPLAY)[^;]*"([^;]*)";/, setContantToCorrectJsForEnvironment, 'm')
     php = php.replace(/(\s*const )(JS_EDITOR)[^;]*"([^;]*)";/, setContantToCorrectJsForEnvironment, 'm')
     fs.writeFileSync(file, php)
-
-  rmdir = (dir) ->
-    list = fs.readdirSync(dir)
-    for content in list
-      filename = path.join(dir, content)
-      stat = fs.statSync(filename)
-
-      if filename is '.' or filename is '..'
-      else if stat.isDirectory()
-        rmdir(filename)
-      else
-        fs.unlinkSync(filename)
-    fs.rmdirSync(dir)
 
   # Config
   grunt.initConfig(
@@ -71,28 +57,23 @@ module.exports = (grunt) ->
     watch:
       scripts:
         files: 'src/*.coffee'
-        tasks: ['clean-js', 'coffee', 'concat', 'copy']
+        tasks: ['clean', 'coffee', 'concat', 'copy']
         options:
           interrupt: true
+    clean: ["js"]
 
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-coffee')
     grunt.loadNpmTasks('grunt-contrib-copy')
     grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-watch')
-
-    grunt.registerTask('clean-js', () ->
-      dir = 'js'
-      rmdir(dir)
-      fs.mkdirSync(dir)
-      grunt.log.writeln("Js directory clean!").ok()
-    )
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     grunt.registerTask('go', 'Switch environments', (env) ->
       __ENV__ = env
       config = grunt.config.data.go
       setupPhp(config.phpFileLocation)
-      grunt.task.run(['clean-js', 'coffee'])
+      grunt.task.run(['clean', 'coffee'])
       if __ENV__ is 'dev'
         grunt.task.run('concat')
         grunt.task.run('copy')
