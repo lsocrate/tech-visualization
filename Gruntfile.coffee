@@ -44,30 +44,30 @@ module.exports = (grunt) ->
     coffee:
       compile:
         files:
-          '/tmp/grunt/js/visualization-display.js': 'src/visualization-display.coffee'
-          '/tmp/grunt/js/visualization-editor.js': 'src/visualization-editor.coffee'
-          '/tmp/grunt/js/visualization-widget.js': 'src/visualization-widget.coffee'
+          '/tmp/grunt/tech-visualization/js/visualization-display.js': 'src/visualization-display.coffee'
+          '/tmp/grunt/tech-visualization/js/visualization-editor.js': 'src/visualization-editor.coffee'
+          '/tmp/grunt/tech-visualization/js/visualization-widget.js': 'src/visualization-widget.coffee'
     uglify:
       display:
-        src: '/tmp/grunt/js/visualization-display.js'
+        src: '/tmp/grunt/tech-visualization/js/visualization-display.js'
         dest: 'js/visualization-display.min.js'
       editor:
-        src: ['libs/jquery.Jcrop.js', '/tmp/grunt/js/visualization-editor.js']
+        src: ['libs/jquery.Jcrop.js', '/tmp/grunt/tech-visualization/js/visualization-editor.js']
         dest: 'js/visualization-editor.min.js'
       widget:
-        src: '/tmp/grunt/js/visualization-widget.js'
+        src: '/tmp/grunt/tech-visualization/js/visualization-widget.js'
         dest: 'js/visualization-widget.min.js'
     copy:
       main:
         files: [
-          {expand: true, cwd: '/tmp/grunt/js/', src: '*', dest: 'js/', filter: 'isFile'}
+          {expand: true, cwd: '/tmp/grunt/tech-visualization/js/', src: '*', dest: 'js/', filter: 'isFile'}
         ]
     concat:
       options:
         separator: ';'
       dist:
-        src: ['libs/jquery.Jcrop.js', '/tmp/grunt/js/visualization-editor.js']
-        dest: '/tmp/grunt/js/visualization-editor.js'
+        src: ['libs/jquery.Jcrop.js', '/tmp/grunt/tech-visualization/js/visualization-editor.js']
+        dest: '/tmp/grunt/tech-visualization/js/visualization-editor.js'
 
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-coffee')
