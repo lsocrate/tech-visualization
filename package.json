@@ -1,16 +1,22 @@
 {
   "name": "tech-visualization",
-  "version": "0.1.0",
+  "version": "0.9.0",
+  "bugs": {
+    "email": "luiz@socrate.com.br"
+  },
+  "author": {
+    "name": "Luiz Sócrate",
+    "email": "luiz@socrate.com.br",
+    "url": "http://socrate.com.br"
+  },
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-uglify": "~0.1.1",
-    "grunt-contrib-coffee": "~0.4.0",
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-coffee": "~0.6.3",
     "grunt-contrib-copy": "~0.4.0",
-    "grunt-contrib-concat": "~0.1.2",
-    "grunt-contrib-watch": "~0.3.0",
+    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-watch": "~0.3.1",
     "grunt-contrib-clean": "~0.4.0",
-    "grunt-contrib-compress": "~0.4.1"
+    "grunt-contrib-compress": "~0.4.5"
   }
 }
