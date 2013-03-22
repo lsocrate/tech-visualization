@@ -22,6 +22,7 @@ function tv_print_visualization($visualizationId) {
 class TechVisualizations {
     const NAME = "Visualizations";
     const SLUG = "techVisualization";
+    const SLUG_NEW = "newTechVisualization";
     const CUSTOM_POST_TYPE = "visualizationcontent";
     const VISUALIZATION_META_KEY = "visualization";
     const VISUALIZATION_META_VALUE = "visualization";
@@ -336,6 +337,11 @@ class TechVisualizations {
 
     public function add_menu_page() {
         add_menu_page(self::NAME, self::NAME, 'edit_posts', self::SLUG, array(&$this, "showVisualizationPage"), null, 23);
+        add_submenu_page(self::SLUG, self::NAME, "Add New", "edit_posts", self::SLUG_NEW, array(&$this, "showTechContent"));
+    }
+
+    public function showTechContent() {
+        $this->newVisualizationHandler();
     }
 
     private function handleUpload() {
@@ -407,7 +413,7 @@ class TechVisualizations {
         $visualizationsTable->prepare_items();
         ?>
         <div class="wrap">
-            <h2>Visualizations</h2>
+            <h2>Visualizations <a href="<?php echo admin_url('admin.php?page=' . self::SLUG_NEW); ?>" class="add-new-h2">Add New</a></h2>
             <form id="posts-filter" action="" method="get">
                 <?php $visualizationsTable->display(); ?>
             </form>
@@ -415,16 +421,24 @@ class TechVisualizations {
         <?php
     }
 
+    private function newVisualizationHandler() {
+        if (isset($_POST['html-upload']) && !empty($_FILES)) {
+            if ($this->handleUpload()) {
+                $this->showVisualizationSuccess();
+            }
+        } else {
+            $this->showUploadForm();
+        }
+    }
+
     public function showVisualizationPage() {
+        if (isset($_POST['html-upload']) && !empty($_FILES)) {
+            return $this->newVisualizationHandler();
+        }
+
         $visualizationIds = $this->getVisualizationIdList();
         if (empty($visualizationIds)) {
-            if (isset($_POST['html-upload']) && !empty($_FILES)) {
-                if ($this->handleUpload()) {
-                    $this->showVisualizationSuccess();
-                }
-            } else {
-                $this->showUploadForm();
-            }
+            $this->newVisualizationHandler();
         } else {
             $this->showVisualizationsList($visualizationIds);
             foreach ($visualizationIds as $id) {
