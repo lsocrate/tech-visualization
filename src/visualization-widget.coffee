@@ -1,7 +1,7 @@
 ###
 # CONFIGURATION
 ###
-widgetAjaxUrl = "http://tech.dev/wp-admin/admin-ajax.php?callback=?"
+widgetAjaxUrl = "http://envisioningtech.com/wp-admin/admin-ajax.php?callback=?"
 
 ###
 # COPY VISUALIZATION CLASS FROM visualization-display.js
