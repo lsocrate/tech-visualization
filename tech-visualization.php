@@ -103,6 +103,13 @@ class TechVisualizations {
         die();
     }
 
+    private function deleteListingOfContentId($contentId) {
+        $sql = "DELETE FROM {$this->db->tv_content} WHERE content_id = %d";
+        $query = $this->db->prepare($sql, $contentId);
+
+        return $this->db->query($query) !== false;
+    }
+
     private function getContentForVisualizationId($visualizationId) {
         $sql = "SELECT
                     content.content_id AS id,
@@ -379,7 +386,7 @@ class TechVisualizations {
         ?>
         <div class="wrap">
         <h2>Upload New Visualization</h2>
-        <form enctype="multipart/form-data" method="post" action="<?php echo admin_url('admin.php?page=techVisualization'); ?>" class="media-upload-form type-form validate html-uploader" id="file-form">
+        <form enctype="multipart/form-data" method="post" action="<?php echo admin_url('admin.php?page=' . self::SLUG); ?>" class="media-upload-form type-form validate html-uploader" id="file-form">
 
         <?php media_upload_form(); ?>
 
@@ -431,9 +438,33 @@ class TechVisualizations {
         }
     }
 
+    private function deleteVisualizationListing($visualizationId) {
+        $visualizationId =  (int) $visualizationId;
+        $sql = "DELETE FROM {$this->db->tv_visualizations} WHERE attachment_id = %d;";
+        $query = $this->db->prepare($sql, $visualizationId);
+
+        return $this->db->query($query) !== false;
+    }
+
+    private function deleteVisualization($visualizationId) {
+        $deletedImage = (bool) (wp_delete_post($visualizationId, true) && $this->deleteVisualizationListing($visualizationId));
+        if ($deletedImage) {
+            $contents = $this->getContentForVisualizationId($visualizationId);
+            foreach ($contents as $content) {
+                wp_delete_post($content->id, true);
+                $this->deleteListingOfContentId($content->id);
+            }
+        }
+    }
+
     public function showVisualizationPage() {
         if (isset($_POST['html-upload']) && !empty($_FILES)) {
             return $this->newVisualizationHandler();
+        }
+
+        if (isset($_GET['deleteVisualization'])) {
+            $visualizationId = (int) $_GET['deleteVisualization'];
+            $this->deleteVisualization($visualizationId);
         }
 
         $visualizationIds = $this->getVisualizationIdList();

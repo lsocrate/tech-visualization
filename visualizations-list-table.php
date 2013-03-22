@@ -26,7 +26,8 @@ class VisualizationsListTable extends WP_List_Table {
             "file" => "File",
             "shortcode" => "Shortcode",
             "widget" => "Widget",
-            "content" => "Content"
+            "content" => "Content",
+            "delete" => "Actions"
         );
 
         return $columns;
@@ -50,6 +51,7 @@ class VisualizationsListTable extends WP_List_Table {
             case 'content':
             case 'shortcode':
             case 'widget':
+            case 'delete':
                 return $item[$column_name];
             default:
                 return print_r($item, true);
@@ -102,7 +104,8 @@ class VisualizationsListTable extends WP_List_Table {
                 "file" => $post->post_title,
                 "shortcode" => $this->getShortcode($id),
                 "widget" => "<pre>" . $this->getWidget($id) . "</pre>",
-                "content" => $this->getContent($id)
+                "content" => $this->getContent($id),
+                "delete" => sprintf('<a href="%s">Delete</a>', admin_url('admin.php?page=' . TechVisualizations::SLUG . '&deleteVisualization=' . $id))
             );
             $this->data[] = $row;
         }
